@@ -1,0 +1,29 @@
+name: Main Workflow
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  lint:
+    name: Lint
+    uses: ./.github/workflows/lint.yaml
+    with: 
+      ENFORCE_BLACK: "true"
+      ENFORCE_PYRIGHT: "true"
+      ENFORCE_BANDIT: "false"
+      ENFORCE_FLAKE8: "false"
+
+  test:
+    name: Test
+    uses: ./.github/workflows/test.yaml
+    needs: lint
+
+  deploy:
+    name: Deploy
+    if: success() && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/deploy.yaml
+    needs: test
+    secrets: inherit

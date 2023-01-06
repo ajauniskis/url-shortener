@@ -1,0 +1,89 @@
+name: Lint
+on:
+  workflow_call:
+    inputs:
+      ENFORCE_BLACK:
+        default: "true"
+        type: string
+      ENFORCE_PYRIGHT:
+        default: "true"
+        type: string
+      ENFORCE_BANDIT:
+        default: "true"
+        type: string
+      ENFORCE_FLAKE8:
+        default: "true"
+        type: string
+      PYTHON_VERSION:
+        default: "3.10"
+        type: string
+
+jobs:
+
+  python-black:
+    name: Verify Code Style (Black)
+    if: ${{ inputs.ENFORCE_BLACK == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: ./.github/actions/python-setup
+        with:
+          PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
+
+      - name: Lint Python files
+        run: poetry run black --check --verbose .
+
+  python-pyright:
+    name: Code Type Check (Pyright)
+    if: ${{ inputs.ENFORCE_PYRIGHT == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: ./.github/actions/python-setup
+        with:
+          PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
+
+      - name: Static type check
+        run: poetry run pyright --stats .
+
+  python-bandit:
+    name: Code Security Check (Bandit)
+    if: ${{ inputs.ENFORCE_BANDIT == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: ./.github/actions/python-setup
+        with:
+          PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
+
+      - name: Security Check
+        run: poetry run bandit -c pyproject.toml -r .
+
+  python-flake8:
+    name: Verify Code Style (Flake8)
+    if: ${{ inputs.ENFORCE_FLAKE8 == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: ./.github/actions/python-setup
+        with:
+          PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
+
+      - name: Check Code Style
+        run: poetry run flake8 . -v

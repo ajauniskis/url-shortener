@@ -1,0 +1,25 @@
+name: Test
+on:
+  workflow_call:
+    inputs:
+      PYTHON_VERSION:
+        default: "3.10"
+        type: string
+
+jobs:
+
+  python-test:
+    name: Run Pytest
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: ./.github/actions/python-setup
+        with:
+          PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
+
+      - name: Pytest
+        run: poetry run pytest -v
