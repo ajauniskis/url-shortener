@@ -5,13 +5,13 @@ install: venv_setup poetry_install
 	poetry install
 
 venv_setup:
-	python3.10 -m venv $(venv_dir)
+	python3.9 -m venv $(venv_dir)
 
 poetry_install:
 	curl -sSL https://install.python-poetry.org | python3 -
 
 run:
-	@echo "Run target in Makefile not configured."
+	poetry run uvicorn app.main:app --reload
 
 black:
 	poetry run black --check --verbose .
@@ -28,4 +28,7 @@ flake:
 lint: black pyright bandit flake
 
 test:
-	poetry run pytest -v
+	poetry run pytest -vv
+
+isort:
+	poetry run isort app/. tests/.

@@ -13,13 +13,14 @@ jobs:
     with: 
       ENFORCE_BLACK: "true"
       ENFORCE_PYRIGHT: "true"
-      ENFORCE_BANDIT: "false"
-      ENFORCE_FLAKE8: "false"
+      ENFORCE_BANDIT: "true"
+      ENFORCE_FLAKE8: "true"
 
   test:
     name: Test
     uses: ./.github/workflows/test.yaml
     needs: lint
+    secrets: inherit
 
   deploy:
     name: Deploy
