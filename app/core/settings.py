@@ -1,6 +1,7 @@
 from functools import lru_cache
 
 from pydantic import BaseSettings
+
 from app.core import logger
 
 
