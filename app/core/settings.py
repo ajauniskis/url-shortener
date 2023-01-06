@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     project_key: str
     project_id: str
 
+    app_name = "URL shortener"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
