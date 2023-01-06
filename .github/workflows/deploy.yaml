@@ -21,5 +21,12 @@ jobs:
         with:
           PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
 
+      - name: Export dependencies
+        run: poetry export -o requirements.txt --without-hashes
+
       - name: Deploy
-        run: echo "Add deploy script"
+        uses: BogDAAAMN/deta-deploy-action@v1.0.1
+        with:
+          deta-access-token: ${{ secrets.DETA_ACCESS_TOKEN }}
+          deta-name: "app"
+          deta-project: "url-shortener"
