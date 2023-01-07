@@ -40,3 +40,4 @@ deploy-dev: ## Deploy app to dev
 	poetry export -o requirements.txt --without-hashes
 	deta deploy
 	deta update --env .env
+	deta visor enable
