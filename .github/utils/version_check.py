@@ -56,7 +56,7 @@ class VersionChecker:
         prod_version = self._get_version(prod_pyproject)
 
         if local_version > prod_version:
-            print(f"Version was upgraded from {local_version} to {prod_version}.")
+            print(f"Version was upgraded from {prod_version} to {local_version}.")
 
             return True
 
