@@ -26,9 +26,9 @@ jobs:
           cat .env.template >> .env 
 
       - name: Pytest
-        run: poetry run pytest -v --cov app
+        run: poetry run pytest -v --cov app --cov-report=xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: .coverage
+          files: coverage.xml
