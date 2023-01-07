@@ -4,6 +4,14 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_call:
+    inputs:
+      deta_name:
+        default: "app"
+        type: string
+      deta_project:
+        default: "url-shortener"
+        type: string
 
 jobs:
 
@@ -15,6 +23,8 @@ jobs:
       ENFORCE_PYRIGHT: "true"
       ENFORCE_BANDIT: "true"
       ENFORCE_FLAKE8: "true"
+      deta_name: ${{ inputs.deta_name }}
+      deta_project: ${{ inputs.deta_project }}
 
   test:
     name: Test
@@ -27,7 +37,7 @@ jobs:
     if: success() && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yaml
     with: 
-      deta_name: "app"
-      deta_project: "url-shortener"
+      deta_name: ${{ inputs.deta_name }}
+      deta_project: ${{ inputs.deta_project }}
     needs: test
     secrets: inherit
