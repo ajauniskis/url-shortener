@@ -25,6 +25,7 @@ jobs:
       ENFORCE_FLAKE8: "true"
       deta_name: ${{ inputs.deta_name }}
       deta_project: ${{ inputs.deta_project }}
+    secrets: inherit
 
   test:
     name: Test
