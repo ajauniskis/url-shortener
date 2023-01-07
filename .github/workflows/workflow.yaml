@@ -17,8 +17,8 @@ jobs:
 
       - name: Config Git
         run: |
-          apt update
-          apt install git -y
+          sudo apt update
+          sudo apt install git -y
           git config --global user.name "workflow"
           git config --global user.password "${{ secrets.GITHUB_TOKEN }}"
           git config --global user.email "workflow@github.com"
