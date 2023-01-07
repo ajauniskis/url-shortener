@@ -10,6 +10,8 @@ jobs:
   tag-release:
     name: Push Tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
 
       - name: Check out Git repository
