@@ -87,3 +87,8 @@ jobs:
 
       - name: Check Code Style
         run: poetry run flake8 . -v
+
+  app-version-check:
+    - name: Check if Version was upgraded
+      run: |
+        poetry run python .github/utils/version_check.py
