@@ -21,5 +21,9 @@ jobs:
         with:
           PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
 
+      - name: Set Test Environment Variables
+        run: |
+          cat .env.template >> .env 
+
       - name: Pytest
         run: poetry run pytest -v
