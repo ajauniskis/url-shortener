@@ -7,66 +7,30 @@ on:
 
 jobs:
 
-  tag-release:
-    name: Push Tag
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
+  lint:
+    name: Lint
+    uses: ./.github/workflows/lint.yaml
+    with: 
+      ENFORCE_BLACK: "true"
+      ENFORCE_PYRIGHT: "true"
+      ENFORCE_BANDIT: "true"
+      ENFORCE_FLAKE8: "true"
+      deta_name: "app"
+      deta_project: "url-shortener"
+    secrets: inherit
 
-      - name: Check out Git repository
-        uses: actions/checkout@v3
+  test:
+    name: Test
+    uses: ./.github/workflows/test.yaml
+    needs: lint
+    secrets: inherit
 
-      - name: Generate Tag
-        id: generate-tag
-        run: |
-          echo "TAG=$(cat pyproject.toml | grep version | cut -d '"' -f2)" >> $GITHUB_OUTPUT
-
-      - name: Push Tag
-        uses: tvdias/github-tagger@v0.0.2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.generate-tag.outputs.TAG }}
-
-
-      # - name: Config Git
-      #   run: |
-      #     sudo apt update
-      #     sudo apt install git -y
-      #     git config --global user.name "workflow"
-      #     git config --global user.password "${{ secrets.GITHUB_TOKEN }}"
-      #     git config --global user.email "workflow@github.com"
-      #     git remote set-url origin git@github.com:ajauniskis/url-shortener.git
-
-      # - name: Push Tag
-      #   run: |
-      #     git tag $(cat pyproject.toml | grep version | cut -d '"' -f2)
-      #     git push origin $(cat pyproject.toml | grep version | cut -d '"' -f2)
-
-  # lint:
-  #   name: Lint
-  #   uses: ./.github/workflows/lint.yaml
-  #   with: 
-  #     ENFORCE_BLACK: "true"
-  #     ENFORCE_PYRIGHT: "true"
-  #     ENFORCE_BANDIT: "true"
-  #     ENFORCE_FLAKE8: "true"
-  #     deta_name: "app"
-  #     deta_project: "url-shortener"
-  #   secrets: inherit
-
-  # test:
-  #   name: Test
-  #   uses: ./.github/workflows/test.yaml
-  #   needs: lint
-  #   secrets: inherit
-
-  # deploy:
-  #   name: Deploy
-  #   if: success() && github.ref == 'refs/heads/main'
-  #   uses: ./.github/workflows/deploy.yaml
-  #   with: 
-  #     deta_name: "app"
-  #     deta_project: "url-shortener"
-  #   needs: test
-  #   secrets: inherit
+  deploy:
+    name: Deploy
+    if: success() && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/deploy.yaml
+    with: 
+      deta_name: "app"
+      deta_project: "url-shortener"
+    needs: test
+    secrets: inherit
