@@ -48,7 +48,6 @@ jobs:
           PROJECT_KEY: ${{ secrets.PROJECT_KEY }
           PROJECT_ID: ${{ secrets.PROJECT_ID }
         run: |
-          touch .env
           echo ENV="$ENV">> .env
           echo BASE_URL="$BASE_URL">> .env
           echo PROJECT_KEY="$PROJECT_KEY">> .env
