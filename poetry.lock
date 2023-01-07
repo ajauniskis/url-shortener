@@ -1149,7 +1149,7 @@ pbr = ">=2.0.0,<2.1.0 || >2.1.0"
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 files = [
@@ -1312,4 +1312,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "85d7a42781e25d22984a29a0bdbc95b7eddf4d4ea225b339605385313c33b768"
+content-hash = "46c897d11d3be738501edb952e673229c0efd158643b51bdef589cd122d03ba0"
