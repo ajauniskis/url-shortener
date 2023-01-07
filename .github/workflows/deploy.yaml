@@ -2,6 +2,10 @@ name: Deploy
 on: 
   workflow_call:
     inputs:
+      deta_name:
+        type: string
+      deta_project:
+        type: string
       PYTHON_VERSION:
         default: "3.9"
         type: string
@@ -21,12 +25,39 @@ jobs:
         with:
           PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
 
-      - name: Export dependencies
-        run: poetry export -o requirements.txt --without-hashes
+      - name: Install Deta CLI
+        run: |
+          curl -fsSL https://get.deta.dev/cli.sh | sh
 
-      - name: Deploy
-        uses: BogDAAAMN/deta-deploy-action@v1.0.1
-        with:
-          deta-access-token: ${{ secrets.DETA_ACCESS_TOKEN }}
-          deta-name: "app"
-          deta-project: "url-shortener"
+      - name: Clone Deta Metadata
+        env:
+          DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+        run: |
+          ~/.deta/bin/deta clone --name ${{ inputs.deta_name }} --project ${{ inputs.deta_project }} tmp/
+        cp -r tmp/.deta .
+
+      - name: Export dependencies
+        run: |
+          poetry export -o requirements.txt --without-hashes
+
+      - name: Set Deta Environment Variables
+        env:
+          DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+          ENV: prod
+          BASE_URL: ${{ secrets.BASE_URL }
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }
+          PROJECT_ID: ${{ secrets.PROJECT_ID }
+        run: |
+          touch .env
+          echo ENV="$ENV">> .env
+          echo BASE_URL="$BASE_URL">> .env
+          echo PROJECT_KEY="$PROJECT_KEY">> .env
+          echo PROJECT_ID="$PROJECT_ID">> .env
+          ~/.deta/bin/deta update --env .env
+
+      - name: Deploy to Deta
+        env:
+          DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+        run: |
+          ~/.deta/bin/deta deploy
+
