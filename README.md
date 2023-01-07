@@ -4,6 +4,7 @@
     </a>
     <a href="https://github.com/ajauniskis/url-shortener/actions?query=branch%3Amain+" target="_blank">
         <img src="https://github.com/ajauniskis/url-shortener/actions/workflows/workflow.yaml/badge.svg?branch=main">
+    </a>
 </p>
 ## Setup local environment
 To setup local development environment copy `.env.template` to `.env` and add your environment variables.
