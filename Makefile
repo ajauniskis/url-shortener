@@ -32,3 +32,8 @@ test:
 
 isort:
 	poetry run isort app/. tests/.
+
+deploy-dev:
+	poetry export -o requirements.txt --without-hashes
+	deta deploy
+	deta update --env .env
