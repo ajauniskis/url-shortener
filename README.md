@@ -2,6 +2,8 @@
     <a href="https://codecov.io/github/ajauniskis/url-shortener" > 
     <img src="https://codecov.io/github/ajauniskis/url-shortener/branch/feature/init/graph/badge.svg?token=T3JC9SMO7H"/> 
     </a>
+    <a href="https://github.com/ajauniskis/url-shortener/actions?query=branch%3Amain+" target="_blank">
+        <img src="https://github.com/ajauniskis/url-shortener/actions/workflows/workflow.yaml/badge.svg?branch=main">
 </p>
 ## Setup local environment
 To setup local development environment copy `.env.template` to `.env` and add your environment variables.
