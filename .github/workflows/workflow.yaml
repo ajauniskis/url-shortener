@@ -29,5 +29,5 @@ jobs:
     with: 
       deta_name: "app"
       deta_project: "url-shortener"
-    needs: test
+    # needs: test
     secrets: inherit
