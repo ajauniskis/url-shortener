@@ -1,9 +1,10 @@
-import os
-from typing import Dict, Union
-from app.core import logger
+import re
+from typing import Dict
+
 import toml
 from packaging import version
-import re
+
+from app.core import logger
 
 
 class VersionChecker:
@@ -62,7 +63,8 @@ class VersionChecker:
         else:
             raise Exception(
                 "Version is not upgraded."
-                + f" Version in prod: {prod_version}, version in branch: {local_version}"
+                + f" Version in prod: {prod_version},"
+                + f" version in branch: {local_version}"
             )
 
 
