@@ -34,7 +34,7 @@ jobs:
           DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
         run: |
           ~/.deta/bin/deta clone --name ${{ inputs.deta_name }} --project ${{ inputs.deta_project }} tmp/
-        cp -r tmp/.deta .
+          cp -r tmp/.deta .
 
       - name: Export dependencies
         run: |
