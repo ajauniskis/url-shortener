@@ -1,7 +1,7 @@
 name: Python Setup
 inputs:
   PYTHON_VERSION:
-    default: "3.10"
+    default: "3.9"
     type: string
 
 runs:

@@ -2,8 +2,12 @@ name: Deploy
 on: 
   workflow_call:
     inputs:
+      deta_name:
+        type: string
+      deta_project:
+        type: string
       PYTHON_VERSION:
-        default: "3.10"
+        default: "3.9"
         type: string
 
 jobs:
@@ -21,5 +25,57 @@ jobs:
         with:
           PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
 
-      - name: Deploy
-        run: echo "Add deploy script"
+      - name: Install Deta CLI
+        run: |
+          curl -fsSL https://get.deta.dev/cli.sh | sh
+
+      - name: Clone Deta Metadata
+        env:
+          DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+        run: |
+          ~/.deta/bin/deta clone --name ${{ inputs.deta_name }} --project ${{ inputs.deta_project }} tmp/
+          cp -r tmp/.deta .
+
+      - name: Export dependencies
+        run: |
+          poetry export -o requirements.txt --without-hashes
+
+      - name: Set Deta Environment Variables
+        env:
+          DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+          ENV: prod
+          BASE_URL: ${{ secrets.BASE_URL }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        run: |
+          echo ENV="$ENV">> .env
+          echo BASE_URL="$BASE_URL">> .env
+          echo PROJECT_KEY="$PROJECT_KEY">> .env
+          echo PROJECT_ID="$PROJECT_ID">> .env
+          ~/.deta/bin/deta update --env .env
+
+      - name: Deploy to Deta
+        env:
+          DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+        run: |
+          ~/.deta/bin/deta deploy
+
+  tag-release:
+    name: Push Tag
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Generate Tag
+        id: generate-tag
+        run: |
+          echo "TAG=$(cat pyproject.toml | grep version | cut -d '"' -f2)" >> $GITHUB_OUTPUT
+
+      - name: Push Tag
+        uses: tvdias/github-tagger@v0.0.2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.generate-tag.outputs.TAG }}
+

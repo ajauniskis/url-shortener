@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       PYTHON_VERSION:
-        default: "3.10"
+        default: "3.9"
         type: string
 
 jobs:
@@ -21,5 +21,14 @@ jobs:
         with:
           PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
 
+      - name: Set Test Environment Variables
+        run: |
+          cat .env.template >> .env 
+
       - name: Pytest
-        run: poetry run pytest -v
+        run: poetry run pytest -v --cov app --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: coverage.xml
