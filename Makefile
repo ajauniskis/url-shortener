@@ -31,7 +31,7 @@ flake: ## Check Python code style
 lint: black pyright bandit flake ## Run Python code checks
 
 test: ## Run app tests
-	poetry run pytest -vv
+	poetry run pytest -vv --cov app
 
 isort: ## Sort Python imports
 	poetry run isort app/. tests/.
