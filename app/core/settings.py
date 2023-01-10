@@ -8,8 +8,6 @@ from app.core import logger
 class Settings(BaseSettings):
     env: str
     base_url: str
-    project_key: str
-    project_id: str
 
     app_name = "URL shortener"
 
