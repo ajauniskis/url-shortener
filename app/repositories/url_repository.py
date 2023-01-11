@@ -1,5 +1,3 @@
-from fastapi import Depends
-
 from app.infrastructure import AbstractDatabaseClient, get_database
 from app.repositories.abstract_repository import AbstractRepository
 
