@@ -15,7 +15,7 @@ class DatabaseConfig(BaseSettings):
 
 @lru_cache
 def _get_cached_database_config() -> DatabaseConfig:
-    logger.info(f"Loading cached database config")
+    logger.info("Loading cached database config")
     return DatabaseConfig()  # pyright:  ignore [reportGeneralTypeIssues]
 
 
@@ -23,5 +23,5 @@ def get_database_config() -> DatabaseConfig:
     if USE_CACHED_SETTINGS:
         return _get_cached_database_config()
     else:
-        logger.info(f"Loading database config")
+        logger.info("Loading database config")
         return DatabaseConfig()  # pyright:  ignore [reportGeneralTypeIssues]
