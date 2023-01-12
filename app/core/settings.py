@@ -5,7 +5,7 @@ from pydantic import BaseSettings
 
 from app.core import logger
 
-USE_CACHED_SETTINGS = os.environ.get("USE_CACHED_SETTINGS", "TRUE").lower == "true"
+USE_CACHED_SETTINGS = os.environ.get("USE_CACHED_SETTINGS", "TRUE").lower() == "true"
 
 
 class Settings(BaseSettings):
