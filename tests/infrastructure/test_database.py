@@ -1,11 +1,13 @@
 from unittest import TestCase
+from unittest.mock import patch
+
 from app.infrastructure import get_database
-import os
 
 
 class TestGetDatabase(TestCase):
-    def test_get_database__invalid_database_type__thorws(self):
-        os.environ["DATABASE_TYPE"] = "invalid-database"
+    @patch("app.infrastructure.config.DatabaseConfig")
+    def test_get_database__invalid_database_type__thorws(self, patch_config):
+        patch_config.return_value.database_type = "invalid-database"
 
         with self.assertRaises(ValueError) as exception_context:
             get_database("some_table")
@@ -16,11 +18,14 @@ class TestGetDatabase(TestCase):
             + "Valid database types: ['deta-base'].",
         )
 
-    def test_get_database__returns_database_client(self):
+    @patch("app.infrastructure.config.DatabaseConfig")
+    def test_get_database__returns_database_client(self, patch_config):
+        patch_config.return_value.database_type = "deta-base"
+
         database = get_database("some_table")
         actual = type(database).__bases__[0].__name__
 
-        self.assertEquals(
+        self.assertEqual(
             actual,
             "AbstractDatabaseClient",
         )
