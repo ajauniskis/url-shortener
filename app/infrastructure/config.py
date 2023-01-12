@@ -2,6 +2,8 @@ from functools import lru_cache
 
 from pydantic import BaseSettings
 
+from app.core import USE_CACHED_SETTINGS, logger
+
 
 class DatabaseConfig(BaseSettings):
     database_type: str
@@ -12,5 +14,14 @@ class DatabaseConfig(BaseSettings):
 
 
 @lru_cache
-def get_database_config() -> DatabaseConfig:
+def _get_cached_database_config() -> DatabaseConfig:
+    logger.info(f"Loading cached database config")
     return DatabaseConfig()  # pyright:  ignore [reportGeneralTypeIssues]
+
+
+def get_database_config() -> DatabaseConfig:
+    if USE_CACHED_SETTINGS:
+        return _get_cached_database_config()
+    else:
+        logger.info(f"Loading database config")
+        return DatabaseConfig()  # pyright:  ignore [reportGeneralTypeIssues]
