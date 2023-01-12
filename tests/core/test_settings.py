@@ -1,8 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from app.core import get_settings, settings
-from app.core.settings import _get_cached_settings, Settings
+from app.core import get_settings
+from app.core.settings import Settings, _get_cached_settings
 
 
 class TestSettings(TestCase):
