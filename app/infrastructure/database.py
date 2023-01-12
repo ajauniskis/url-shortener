@@ -1,9 +1,9 @@
 from functools import lru_cache
 
+from app.core import USE_CACHED_SETTINGS
 from app.infrastructure import get_database_config
 from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 from app.infrastructure.deta import DetaBaseClient
-from app.core import USE_CACHED_SETTINGS
 
 
 @lru_cache
