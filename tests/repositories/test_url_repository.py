@@ -1,20 +1,28 @@
 from unittest import IsolatedAsyncioTestCase
+from unittest.mock import patch
 
 from app.repositories import UrlRepository
 
 
-class TestAbstractRepository(IsolatedAsyncioTestCase):
-    async def asyncSetUp(self) -> None:
-        self.repo = UrlRepository()
+class TestUrlRepository(IsolatedAsyncioTestCase):
+    @patch("app.infrastructure.config.DatabaseConfig")
+    async def test_url_repository__table_name__returns_url(self, patch_database_config):
+        patch_database_config.return_value.database_type = "deta-base"
 
-    async def test_url_repository__table_name__returns_url(self):
+        repo = UrlRepository()
         self.assertEqual(
-            self.repo.table_name,
+            repo.table_name,
             "url",
         )
 
-    async def test_url_repository__database__returns_database_client(self):
-        actual = type(self.repo.database).__bases__[0].__name__
+    @patch("app.infrastructure.config.DatabaseConfig")
+    async def test_url_repository__database__returns_database_client(
+        self, patch_database_config
+    ):
+        patch_database_config.return_value.database_type = "deta-base"
+
+        repo = UrlRepository()
+        actual = type(repo.database).__bases__[0].__name__
 
         self.assertEqual(
             actual,
