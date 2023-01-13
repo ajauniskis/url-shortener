@@ -1,7 +1,7 @@
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import patch
 
-from app.infrastructure import get_database, AbstractDatabaseClient
+from app.infrastructure import get_database
 from app.infrastructure.database import _get_cached_database
 
 
