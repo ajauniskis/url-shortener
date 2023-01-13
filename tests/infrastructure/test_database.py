@@ -15,9 +15,12 @@ class TestGetDatabase(IsolatedAsyncioTestCase):
         patch_get_cached_database.assert_called()
 
     @patch("app.infrastructure.database._get_cached_database")
-    def test_get_database__USE_CACHED_SETTINGS_false__not_uses_cache(
-        self, patch_get_cached_database
+    @patch("app.infrastructure.config.DatabaseConfig")
+    async def test_get_database__USE_CACHED_SETTINGS_false__not_uses_cache(
+        self, patch_config, patch_get_cached_database
     ):
+        patch_config.return_value.database_type = "deta-base"
+
         get_database("some_table")
         patch_get_cached_database.assert_not_called()
 
