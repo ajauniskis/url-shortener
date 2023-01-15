@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pydantic import ValidationError
+
 from fastapi.testclient import TestClient
 
 from main import app
