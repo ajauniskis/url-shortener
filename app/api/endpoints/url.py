@@ -11,8 +11,6 @@ router = APIRouter(
     tags=["url"],
 )
 
-url_repository = UrlRepository()
-
 
 @router.post(
     "/",
@@ -28,6 +26,7 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
         target_url=url.target_url,
     )
 
+    url_repository = UrlRepository()
     repository_response = await url_repository.create_url(url_model=url_domain)
     response = CreateUrlResponse(**repository_response.dict())
 

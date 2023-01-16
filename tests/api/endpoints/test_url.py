@@ -64,8 +64,8 @@ class TestUrl(IsolatedAsyncioTestCase):
         )
 
     @patch(
-        "app.api.endpoints.url.url_repository",
-        new=UrlRepositoryOverride(),
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
     )
     async def test_create_url__returns_created_url(self):
         actual = self.client.post(
