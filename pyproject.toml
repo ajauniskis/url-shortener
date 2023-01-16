@@ -46,7 +46,8 @@ reportMissingImports = true
 [tool.bandit]
 exclude_dirs = [
     "**/__pycache__",
-    ".venv"
+    ".venv",
+    "tests"
     ]
 
 [tool.flake8]
