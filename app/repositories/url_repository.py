@@ -8,5 +8,5 @@ class UrlRepository(AbstractRepository):
         self.table_name = "url"
         self.database: AbstractDatabaseClient = get_database(self.table_name)
 
-    async def create_url(self, url_model: Url):
+    async def create_url(self, url_model: Url) -> Url:
         return await self.database.create(url_model)
