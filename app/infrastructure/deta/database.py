@@ -1,4 +1,3 @@
-from app.domain import Url
 from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 from app.infrastructure.deta.base import get_base
 
@@ -10,4 +9,4 @@ class DetaBaseClient(AbstractDatabaseClient):
 
     async def create(self, model):
         response = await self.base.put([model.dict()])
-        return Url(**response["processed"]["items"][0])
+        return model.parse_obj(response["processed"]["items"][0])
