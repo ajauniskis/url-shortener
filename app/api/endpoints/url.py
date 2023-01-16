@@ -19,7 +19,7 @@ url_repository = UrlRepository()
     summary="Create short URL",
     response_model=CreateUrlResponse,
 )
-async def create_url(url: CreateUrlRequest):
+async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
     chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     secret_key = "".join(secrets.choice(chars) for _ in range(8))
 
@@ -28,6 +28,7 @@ async def create_url(url: CreateUrlRequest):
         target_url=url.target_url,
     )
 
-    response = await url_repository.create_url(url_model=url_domain)
+    repository_response = await url_repository.create_url(url_model=url_domain)
+    response = CreateUrlResponse(**repository_response.dict())
 
     return response
