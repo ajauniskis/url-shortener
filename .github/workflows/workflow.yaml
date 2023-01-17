@@ -27,7 +27,7 @@ jobs:
 
   deploy:
     name: Deploy
-    if: success() && github.ref == 'refs/heads/main'
+    # if: success() && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yaml
     with: 
       deta_name: "app"
