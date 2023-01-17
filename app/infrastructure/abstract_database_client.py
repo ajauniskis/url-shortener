@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Any, Dict
 
 
 class AbstractDatabaseClient(ABC):
@@ -6,4 +7,7 @@ class AbstractDatabaseClient(ABC):
         self.table_name = table_name
 
     async def create(self, model):
+        raise NotImplementedError
+
+    async def get(self, key: str) -> Dict[str, Any]:
         raise NotImplementedError
