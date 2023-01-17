@@ -1,7 +1,9 @@
 from unittest import IsolatedAsyncioTestCase
+
+from aiodeta import Deta
+
 from app.infrastructure.deta import DetaBaseClient
 from tests.conftest import TestDomainModel
-from aiodeta import Deta
 
 
 class TestDetabaseClient(IsolatedAsyncioTestCase):
