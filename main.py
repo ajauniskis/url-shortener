@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.endpoints.index import router as index_router
+from app.api.endpoints.router import api_router
 from app.core import ProjectConfigParser, get_settings
 
 settings = get_settings()
@@ -18,3 +19,4 @@ app = FastAPI(
 )
 
 app.include_router(index_router)
+app.include_router(api_router)

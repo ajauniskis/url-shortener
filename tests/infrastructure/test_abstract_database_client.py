@@ -1,14 +1,11 @@
 from unittest import IsolatedAsyncioTestCase
 
-from app.repositories import AbstractRepository
+from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 
 
 class TestAbstractRepository(IsolatedAsyncioTestCase):
-    async def test_abstract_repository(self):
-        AbstractRepository()
-
     async def test_create_url__throws(self):
-        repo = AbstractRepository()
+        database = AbstractDatabaseClient("some_table")
 
         with self.assertRaises(NotImplementedError):
-            await repo.create_url({})
+            await database.create({})

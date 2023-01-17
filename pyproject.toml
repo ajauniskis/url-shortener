@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "url-shortener"
-version = "0.0.1a1"
+version = "0.0.1a2"
 description = "Url shortener API"
 authors = ["Algirdas Jauniskis <jauniskis.a@gmail.com>"]
 readme = "README.md"
@@ -46,7 +46,8 @@ reportMissingImports = true
 [tool.bandit]
 exclude_dirs = [
     "**/__pycache__",
-    ".venv"
+    ".venv",
+    "tests"
     ]
 
 [tool.flake8]
