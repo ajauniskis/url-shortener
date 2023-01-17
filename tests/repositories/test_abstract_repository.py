@@ -7,8 +7,14 @@ class TestAbstractRepository(IsolatedAsyncioTestCase):
     async def test_abstract_repository(self):
         AbstractRepository()
 
-    async def test_create_url__throws(self):
+    async def test_create__throws(self):
         repo = AbstractRepository()
 
         with self.assertRaises(NotImplementedError):
-            await repo.create_url({})
+            await repo.create({})
+
+    async def test_get__throws(self):
+        repo = AbstractRepository()
+
+        with self.assertRaises(NotImplementedError):
+            await repo.get("some_key")

@@ -47,7 +47,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
             is_active=True,
             clicks=0,
         )
-        actual = await repo.create_url(model)
+        actual = await repo.create(model)
         expected = Url(
             key="key",
             secret_key="secret_key",
