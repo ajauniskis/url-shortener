@@ -1,7 +1,6 @@
 from unittest import IsolatedAsyncioTestCase
 from app.infrastructure.deta import DetaBaseClient
 from tests.conftest import TestDomainModel
-from unittest.mock import patch
 from aiodeta import Deta
 
 
