@@ -15,6 +15,6 @@ class UrlRepository(AbstractRepository):
 
     async def get(self, key: str) -> Union[Url, None]:
         response = await self.database.get(key)
-        if not "target_url" in response.keys():
+        if "target_url" not in response.keys():
             return None
         return Url(**response)
