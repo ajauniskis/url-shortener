@@ -10,7 +10,6 @@ license="MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-pre-commit = "^2.20.0"
 fastapi = "0.88.0"
 uvicorn = "0.20.0"
 deta = "1.1.0a3"
