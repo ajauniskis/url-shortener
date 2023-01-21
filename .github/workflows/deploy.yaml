@@ -45,13 +45,15 @@ jobs:
           DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
           ENV: prod
           BASE_URL: ${{ secrets.BASE_URL }}
-          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          DATABASE_TYPE: ${{ secrets.DATABASE_TYPE }}
+          DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
+          DETA_PROJECT_ID: ${{ secrets.DETA_PROJECT_ID }}
         run: |
           echo ENV="$ENV">> .env
           echo BASE_URL="$BASE_URL">> .env
-          echo PROJECT_KEY="$PROJECT_KEY">> .env
-          echo PROJECT_ID="$PROJECT_ID">> .env
+          echo DATABASE_TYPE="$DATABASE_TYPE">> .env
+          echo DETA_PROJECT_KEY="$DETA_PROJECT_KEY">> .env
+          echo DETA_PROJECT_ID="$DETA_PROJECT_ID">> .env
           ~/.deta/bin/deta update --env .env
 
       - name: Deploy to Deta
