@@ -18,3 +18,15 @@ class DatabaseClientOverride(AbstractDatabaseClient):
     async def create(self, model):
         model.key = "key"
         return model.parse_obj(model.dict())
+
+    async def get(self, key):
+        if key == "valid_url":
+            return {
+                "key": "some_key",
+                "secret_key": "secret_key",
+                "target_url": "https://test.com",
+                "is_active": True,
+                "clicks": 0,
+            }
+        else:
+            return {}
