@@ -1,8 +1,9 @@
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import patch
 
-from app.infrastructure.deta.base import get_base, _get_cached_base
 from aiodeta.client import _Base
+
+from app.infrastructure.deta.base import _get_cached_base, get_base
 
 
 class TestGetBase(IsolatedAsyncioTestCase):
