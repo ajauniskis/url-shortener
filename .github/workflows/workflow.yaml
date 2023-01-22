@@ -27,7 +27,7 @@ jobs:
 
   deploy-dev:
     name: Deploy Development
-    if: success() && github.event_name = 'pull_request'
+    if: success() && github.event_name == 'pull_request'
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: development
