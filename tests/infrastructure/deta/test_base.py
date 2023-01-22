@@ -1,6 +1,8 @@
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import patch
-from app.infrastructure.deta.base import get_base
+
+from app.infrastructure.deta.base import get_base, _get_cached_base
+from aiodeta.client import _Base
 
 
 class TestGetBase(IsolatedAsyncioTestCase):
@@ -19,3 +21,12 @@ class TestGetBase(IsolatedAsyncioTestCase):
     ):
         get_base("test")
         patch_get_cached_base.assert_not_called()
+
+    @patch("app.infrastructure.deta.base.USE_CACHED_SETTINGS", True)
+    async def test_get_cached_base__returns_base(self):
+        actual = _get_cached_base("test")
+
+        self.assertIsInstance(
+            actual,
+            _Base,
+        )
