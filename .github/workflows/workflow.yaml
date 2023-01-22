@@ -25,11 +25,23 @@ jobs:
     needs: lint
     secrets: inherit
 
+  deploy-dev:
+    name: Deploy Development
+    if: success() && github.event_name = 'pull_request'
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: development
+      deta_name: "app"
+      deta_project: "dev-url-shortener"
+    needs: test
+    secrets: inherit
+
   deploy:
     name: Deploy
     if: success() && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yaml
-    with: 
+    with:
+      environment: production
       deta_name: "app"
       deta_project: "url-shortener"
     needs: test

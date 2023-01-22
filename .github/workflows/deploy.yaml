@@ -2,6 +2,9 @@ name: Deploy
 on: 
   workflow_call:
     inputs:
+      environment:
+        type: string
+        default: development
       deta_name:
         type: string
       deta_project:
@@ -14,6 +17,7 @@ jobs:
 
   deploy:
     name: Deploy
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
 
@@ -43,11 +47,11 @@ jobs:
       - name: Set Deta Environment Variables
         env:
           DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
-          ENV: prod
-          BASE_URL: ${{ secrets.BASE_URL }}
-          DATABASE_TYPE: ${{ secrets.DATABASE_TYPE }}
+          ENV: ${{ var.ENV }}
+          BASE_URL: ${{ var.BASE_URL }}
+          DATABASE_TYPE: ${{ var.DATABASE_TYPE }}
           DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
-          DETA_PROJECT_ID: ${{ secrets.DETA_PROJECT_ID }}
+          DETA_PROJECT_ID: ${{ var.DETA_PROJECT_ID }}
         run: |
           echo ENV="$ENV">> .env
           echo BASE_URL="$BASE_URL">> .env
