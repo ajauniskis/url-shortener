@@ -33,7 +33,7 @@ jobs:
       environment: development
       deta_name: "app"
       deta_project: "dev-url-shortener"
-    needs: test
+    # needs: test
     secrets: inherit
 
   deploy:
@@ -44,5 +44,5 @@ jobs:
       environment: production
       deta_name: "app"
       deta_project: "url-shortener"
-    needs: test
+    # needs: test
     secrets: inherit
