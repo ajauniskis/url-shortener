@@ -17,7 +17,9 @@ jobs:
 
   deploy:
     name: Deploy
-    environment: ${{ inputs.environment }}
+    environment: 
+      name: ${{ inputs.environment }}
+      url: ${{ vars.BASE_URL }}
     runs-on: ubuntu-latest
     steps:
 
@@ -68,6 +70,7 @@ jobs:
 
   tag-release:
     name: Push Tag
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
 
@@ -81,7 +84,6 @@ jobs:
 
       - name: Push Tag
         uses: tvdias/github-tagger@v0.0.2
-        if: github.ref == 'refs/heads/main'
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.generate-tag.outputs.TAG }}
