@@ -1,3 +1,7 @@
+from typing import Union
+
+from pydantic import HttpUrl
+
 from app.domain import Url
 from app.infrastructure import AbstractDatabaseClient
 from app.repositories import UrlRepository
@@ -12,6 +16,16 @@ class UrlRepositoryOverride(UrlRepository):
         url_model.is_active = True
         url_model.clicks = 0
         return url_model
+
+    async def get(self, key: str) -> Union[Url, None]:
+        if key == "redirect_url":
+            return Url(
+                key=key,
+                secret_key="secret_key",
+                target_url=HttpUrl("https://google.com", scheme="https"),
+            )
+        else:
+            return None
 
 
 class DatabaseClientOverride(AbstractDatabaseClient):
