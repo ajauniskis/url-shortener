@@ -132,7 +132,7 @@ class TestUrl(IsolatedAsyncioTestCase):
         "app.api.endpoints.url.UrlRepository",
         new=UrlRepositoryOverride,
     )
-    async def test_forward_to_url__invalid_key__returns_message(self):
+    async def test_forward_to_url__invalid_key__returns_404(self):
         redirect_key = "invalid_redirect_url"
         actual = self.client.get(
             f"/api/url/{redirect_key}",
@@ -151,4 +151,29 @@ class TestUrl(IsolatedAsyncioTestCase):
         self.assertEqual(
             actual.status_code,
             404,
+        )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_forward_to_url__disabled_key__returns_400(self):
+        redirect_key = "disabled_redirect_url"
+        actual = self.client.get(
+            f"/api/url/{redirect_key}",
+            follow_redirects=False,
+        )
+
+        expected = {
+            "detail": f"Requested key: '{redirect_key}' is not active.",
+        }
+
+        self.assertEqual(
+            actual.json(),
+            expected,
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            400,
         )

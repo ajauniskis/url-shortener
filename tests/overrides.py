@@ -24,6 +24,13 @@ class UrlRepositoryOverride(UrlRepository):
                 secret_key="secret_key",
                 target_url=HttpUrl("https://google.com", scheme="https"),
             )
+        elif key == "disabled_redirect_url":
+            return Url(
+                key=key,
+                secret_key="secret_key",
+                target_url=HttpUrl("https://google.com", scheme="https"),
+                is_active=False,
+            )
         else:
             return None
 
