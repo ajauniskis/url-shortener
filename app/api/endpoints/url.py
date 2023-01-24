@@ -1,6 +1,7 @@
 import secrets
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import RedirectResponse
 
 from app.api.schemas import CreateUrlRequest, CreateUrlResponse
 from app.domain import Url as UrlDomainModel
@@ -31,3 +32,23 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
     response = CreateUrlResponse(**repository_response.dict())
 
     return response
+
+
+@router.get(
+    "/{url_key}",
+    summary="Redirect to target URL",
+    response_class=RedirectResponse,
+    status_code=307,
+)
+async def forward_to_url(url_key: str):
+    url_repository = UrlRepository()
+
+    repository_response = await url_repository.get(url_key)
+
+    if repository_response:
+        return repository_response.target_url
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Requested key: '{url_key}' does not exist.",
+        )
