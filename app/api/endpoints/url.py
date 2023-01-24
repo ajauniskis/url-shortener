@@ -43,10 +43,16 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
 async def forward_to_url(url_key: str):
     url_repository = UrlRepository()
 
-    repository_response = await url_repository.get(url_key)
+    url = await url_repository.get(url_key)
 
-    if repository_response:
-        return repository_response.target_url
+    if url:
+        if url.is_active:
+            return url.target_url
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Requested key: '{url_key}' is not active.",
+            )
     else:
         raise HTTPException(
             status_code=404,
