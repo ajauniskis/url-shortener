@@ -60,3 +60,12 @@ profile = "black"
 testpaths = [
     "tests",
 ]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "pass",
+    "@abstractmethod",
+    "@abc.abstractmethod",
+]
