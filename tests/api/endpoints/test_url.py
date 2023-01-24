@@ -107,3 +107,48 @@ class TestUrl(IsolatedAsyncioTestCase):
             actual.json()["clicks"],
             expected.clicks,
         )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_forward_to_url__redirects_to_url(self):
+        actual = self.client.get(
+            "/api/url/redirect_url",
+            follow_redirects=False,
+        )
+
+        self.assertEqual(
+            actual.headers["location"],
+            "https://google.com",
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            307,
+        )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_forward_to_url__invalid_key__returns_message(self):
+        redirect_key = "invalid_redirect_url"
+        actual = self.client.get(
+            f"/api/url/{redirect_key}",
+            follow_redirects=False,
+        )
+
+        expected = {
+            "detail": f"Requested key: '{redirect_key}' does not exist.",
+        }
+
+        self.assertEqual(
+            actual.json(),
+            expected,
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            404,
+        )
