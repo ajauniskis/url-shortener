@@ -51,3 +51,6 @@ class DatabaseClientOverride(AbstractDatabaseClient):
             }
         else:
             return {}
+
+    async def query(self, query):
+        pass

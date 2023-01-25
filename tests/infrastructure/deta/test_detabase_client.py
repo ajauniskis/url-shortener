@@ -82,10 +82,18 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
     @patch("app.core.settings.USE_CACHED_SETTINGS", True)
     async def test_query__returns_multiple_records(self):
         created_record_1 = await self.base.put(
-            [self.test_model.dict()],
+            [
+                TestDomainModel(
+                    value="some_value1",
+                ).dict()
+            ],
         )
         created_record_2 = await self.base.put(
-            [self.test_model.dict()],
+            [
+                TestDomainModel(
+                    value="some_value2",
+                ).dict()
+            ],
         )
 
         expected = [
@@ -95,7 +103,8 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
 
         actual = await self.database.query(
             [
-                {"value": self.test_model.value},
+                {"value": "some_value1"},
+                {"value": "some_value2"},
             ]
         )
 
