@@ -84,14 +84,14 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
         created_record_1 = await self.base.put(
             [
                 TestDomainModel(
-                    value="some_value1",
+                    value="test_query__returns_multiple_records1",
                 ).dict()
             ],
         )
         created_record_2 = await self.base.put(
             [
                 TestDomainModel(
-                    value="some_value2",
+                    value="test_query__returns_multiple_records2",
                 ).dict()
             ],
         )
@@ -103,13 +103,13 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
 
         actual = await self.database.query(
             [
-                {"value": "some_value1"},
-                {"value": "some_value2"},
+                {"value": "test_query__returns_multiple_records1"},
+                {"value": "test_query__returns_multiple_records2"},
             ]
         )
 
         self.assertEqual(
-            actual,
+            sorted(actual, key=lambda x: x["value"]),
             expected,
         )
 
