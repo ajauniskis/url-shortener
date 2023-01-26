@@ -53,4 +53,40 @@ class DatabaseClientOverride(AbstractDatabaseClient):
             return {}
 
     async def query(self, query):
-        pass
+        if query == [
+            {
+                "secret_key": "invalid_key",
+            }
+        ]:
+            return []
+        if query == [
+            {
+                "secret_key": "single_record",
+            }
+        ]:
+            return [
+                {
+                    "key": "some_key",
+                    "secret_key": "single_record",
+                    "target_url": HttpUrl("https://google.com", scheme="https"),
+                }
+            ]
+        if query == [
+            {
+                "secret_key": "multiple_records",
+            }
+        ]:
+            return [
+                {
+                    "key": "some_key1",
+                    "secret_key": "multiple_records",
+                    "target_url": HttpUrl("https://google.com", scheme="https"),
+                },
+                {
+                    "key": "some_key2",
+                    "secret_key": "multiple_records",
+                    "target_url": HttpUrl("https://google.com", scheme="https"),
+                },
+            ]
+        else:
+            raise NotImplementedError
