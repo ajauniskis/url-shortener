@@ -34,6 +34,9 @@ class UrlRepositoryOverride(UrlRepository):
         else:
             return None
 
+    async def get_by_secret_key(self, secret_key: str) -> Union[Url, None]:
+        return None
+
 
 class DatabaseClientOverride(AbstractDatabaseClient):
     async def create(self, model):
