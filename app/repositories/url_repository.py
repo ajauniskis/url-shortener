@@ -18,3 +18,15 @@ class UrlRepository(AbstractRepository):
         if "target_url" not in response.keys():
             return None
         return Url(**response)
+
+    async def get_by_secret_key(self, secret_key: str) -> Union[Url, None]:
+        response = await self.database.query(
+            [
+                {"secret_key": secret_key},
+            ]
+        )
+
+        if not len(response):
+            return None
+
+        return Url(**response[0])  # pyright:  ignore [reportGeneralTypeIssues]

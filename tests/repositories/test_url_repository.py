@@ -85,7 +85,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
 
     @patch("app.infrastructure.config.DatabaseConfig")
     @patch("app.repositories.url_repository.get_database")
-    async def test_get_invalid_key__returns_none(
+    async def test_get__invalid_key__returns_none(
         self, patch_get_database, patch_database_config
     ):
         patch_database_config.return_value.database_type = "deta-base"
@@ -93,6 +93,54 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
         repo = UrlRepository()
 
         actual = await repo.get("invalid_key")
+
+        self.assertEqual(
+            actual,
+            None,
+        )
+
+    @patch("app.infrastructure.config.DatabaseConfig")
+    @patch("app.repositories.url_repository.get_database")
+    async def test_get_by_secret_key__returns_url(
+        self, patch_get_database, patch_database_config
+    ):
+        patch_database_config.return_value.database_type = "deta-base"
+        patch_get_database.return_value = DatabaseClientOverride("url")
+        repo = UrlRepository()
+
+        actual = await repo.get_by_secret_key("single_record")
+
+        self.assertIsInstance(
+            actual,
+            Url,
+        )
+
+    @patch("app.infrastructure.config.DatabaseConfig")
+    @patch("app.repositories.url_repository.get_database")
+    async def test_get_by_secret_key__multiple_records__returns_single_url(
+        self, patch_get_database, patch_database_config
+    ):
+        patch_database_config.return_value.database_type = "deta-base"
+        patch_get_database.return_value = DatabaseClientOverride("url")
+        repo = UrlRepository()
+
+        actual = await repo.get_by_secret_key("multiple_records")
+
+        self.assertIsInstance(
+            actual,
+            Url,
+        )
+
+    @patch("app.infrastructure.config.DatabaseConfig")
+    @patch("app.repositories.url_repository.get_database")
+    async def test_get_by_secret_key__invalid_key__returns_none(
+        self, patch_get_database, patch_database_config
+    ):
+        patch_database_config.return_value.database_type = "deta-base"
+        patch_get_database.return_value = DatabaseClientOverride("url")
+        repo = UrlRepository()
+
+        actual = await repo.get_by_secret_key("invalid_key")
 
         self.assertEqual(
             actual,

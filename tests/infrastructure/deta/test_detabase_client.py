@@ -58,3 +58,73 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
         )
 
         await self.base.delete(expected["key"])
+
+    @patch("app.core.settings.USE_CACHED_SETTINGS", True)
+    async def test_query__returns_record(self):
+        created_record = await self.base.put(
+            [self.test_model.dict()],
+        )
+        expected = created_record["processed"]["items"][0]
+
+        actual = await self.database.query(
+            [
+                {"value": self.test_model.value},
+            ]
+        )
+
+        self.assertEqual(
+            actual[0],
+            expected,
+        )
+
+        await self.base.delete(expected["key"])
+
+    @patch("app.core.settings.USE_CACHED_SETTINGS", True)
+    async def test_query__returns_multiple_records(self):
+        created_record_1 = await self.base.put(
+            [
+                TestDomainModel(
+                    value="test_query__returns_multiple_records1",
+                ).dict()
+            ],
+        )
+        created_record_2 = await self.base.put(
+            [
+                TestDomainModel(
+                    value="test_query__returns_multiple_records2",
+                ).dict()
+            ],
+        )
+
+        expected = [
+            created_record_1["processed"]["items"][0],
+            created_record_2["processed"]["items"][0],
+        ]
+
+        actual = await self.database.query(
+            [
+                {"value": "test_query__returns_multiple_records1"},
+                {"value": "test_query__returns_multiple_records2"},
+            ]
+        )
+
+        self.assertEqual(
+            sorted(actual, key=lambda x: x["value"]),
+            expected,
+        )
+
+        await self.base.delete(expected[0]["key"])
+        await self.base.delete(expected[1]["key"])
+
+    @patch("app.core.settings.USE_CACHED_SETTINGS", True)
+    async def test_query__not_existing_record_returns_empty_list(self):
+        actual = await self.database.query(
+            [
+                {"value": "not existing"},
+            ]
+        )
+
+        self.assertEqual(
+            actual,
+            [],
+        )
