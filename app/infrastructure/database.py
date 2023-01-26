@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
 from app.core import USE_CACHED_SETTINGS
 from app.infrastructure import get_database_config
-from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 from app.infrastructure.deta import DetaBaseClient
+
+if TYPE_CHECKING:
+    from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 
 
 @lru_cache

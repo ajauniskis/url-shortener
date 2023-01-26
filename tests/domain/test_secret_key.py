@@ -6,7 +6,7 @@ from unittest import IsolatedAsyncioTestCase
 from aiodeta import Deta
 
 from app.domain import SecretKey
-from app.infrastructure.deta import DetaBaseClient, get_deta_base_config
+from app.infrastructure.deta import get_deta_base_config
 from app.repositories import UrlRepository
 
 
