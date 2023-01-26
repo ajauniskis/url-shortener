@@ -11,6 +11,7 @@ USE_CACHED_SETTINGS = os.environ.get("USE_CACHED_SETTINGS", "TRUE").lower() == "
 class Settings(BaseSettings):
     env: str
     base_url: str
+    secret_key_length: int = 8
 
     app_name = "URL shortener"
 
