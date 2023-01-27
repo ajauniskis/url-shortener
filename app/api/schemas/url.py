@@ -12,4 +12,4 @@ class URL(URLBase):
 
 class URLInfo(URL):
     url: HttpUrl
-    admin_url: str
+    secret_key: str
