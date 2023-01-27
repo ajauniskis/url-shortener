@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
+from pydantic import HttpUrl
 
-from app.api.schemas import CreateUrlRequest, CreateUrlResponse
+from app.api.schemas import AdminUrlResponse, CreateUrlRequest, CreateUrlResponse
+from app.core import get_settings
 from app.domain import SecretKey
 from app.domain import Url as UrlDomainModel
 from app.repositories import UrlRepository
@@ -52,4 +54,28 @@ async def forward_to_url(url_key: str):
         raise HTTPException(
             status_code=404,
             detail=f"Requested key: '{url_key}' does not exist.",
+        )
+
+
+@router.get(
+    "/admin/{secret_key}",
+    summary="Administration info",
+    response_model=AdminUrlResponse,
+)
+async def get_admin_info(secret_key: str):
+    url_repository = UrlRepository()
+
+    if url := await url_repository.get_by_secret_key(secret_key):
+        response = AdminUrlResponse(
+            **url.dict(),
+            url=HttpUrl(
+                get_settings().base_url + f"/api/url/{url.key}",
+                scheme="https",
+            ),
+        )
+        return response
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Requested secret key: '{secret_key}' does not exist.",
         )
