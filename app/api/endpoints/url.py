@@ -1,9 +1,8 @@
-import secrets
-
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 
 from app.api.schemas import CreateUrlRequest, CreateUrlResponse
+from app.domain import SecretKey
 from app.domain import Url as UrlDomainModel
 from app.repositories import UrlRepository
 
@@ -19,15 +18,13 @@ router = APIRouter(
     response_model=CreateUrlResponse,
 )
 async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
-    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    secret_key = "".join(secrets.choice(chars) for _ in range(8))
+    url_repository = UrlRepository()
 
     url_domain = UrlDomainModel(
-        secret_key=secret_key,
+        secret_key=await SecretKey.generate_unique(url_repository),
         target_url=url.target_url,
     )
 
-    url_repository = UrlRepository()
     repository_response = await url_repository.create(url_model=url_domain)
     response = CreateUrlResponse(**repository_response.dict())
 
