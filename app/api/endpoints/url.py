@@ -40,9 +40,7 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
 async def forward_to_url(url_key: str):
     url_repository = UrlRepository()
 
-    url = await url_repository.get(url_key)
-
-    if url:
+    if url := await url_repository.get(url_key):
         if url.is_active:
             return url.target_url
         else:
