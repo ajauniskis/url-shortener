@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 
 class AbstractDatabaseClient(ABC):
@@ -16,4 +16,12 @@ class AbstractDatabaseClient(ABC):
 
     @abstractmethod
     async def query(self, query: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def update(
+        self,
+        key: str,
+        record: Dict[str, Union[str, Dict, float, int, bool]],
+    ) -> Dict[str, Union[str, Dict, float, int, bool]]:
         raise NotImplementedError
