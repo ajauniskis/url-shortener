@@ -5,6 +5,7 @@ from aiodeta import Deta
 
 from app.infrastructure.deta import DetaBaseClient, get_deta_base_config
 from tests.conftest import TestDomainModel
+from app.domain import RecordDoesNotExistExeption
 
 
 class TestDetabaseClient(IsolatedAsyncioTestCase):
@@ -128,3 +129,38 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
             actual,
             [],
         )
+
+    @patch("app.core.settings.USE_CACHED_SETTINGS", True)
+    async def test_update__returns_updated_record(self):
+        created_record = await self.base.put(
+            [
+                TestDomainModel(
+                    value="test_update__returns_updated_record",
+                ).dict()
+            ],
+        )
+
+        actual = await self.database.update(
+            key=created_record["processed"]["items"][0]["key"],
+            record={"value": "test_update__returns_updated_record_updated"},
+        )
+
+        expected = {
+            "key": created_record["processed"]["items"][0]["key"],
+            "value": "test_update__returns_updated_record_updated",
+        }
+
+        self.assertEqual(
+            actual,
+            expected,
+        )
+
+        await self.base.delete(created_record["processed"]["items"][0]["key"])
+
+    @patch("app.core.settings.USE_CACHED_SETTINGS", True)
+    async def test_update__invalid_key__throws(self):
+        with self.assertRaises(RecordDoesNotExistExeption) as exception_context:
+            await self.database.update(
+                key="q6svtli7erih",
+                record={"value": "test_update__invalid_key__throws"},
+            )
