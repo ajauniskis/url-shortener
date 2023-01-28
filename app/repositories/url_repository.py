@@ -1,6 +1,6 @@
 from typing import Union
 
-from app.domain import Url
+from app.domain import RecordDoesNotExistExeption, Url
 from app.infrastructure import AbstractDatabaseClient, get_database
 from app.repositories.abstract_repository import AbstractRepository
 
@@ -10,8 +10,8 @@ class UrlRepository(AbstractRepository):
         self.table_name = "url"
         self.database: AbstractDatabaseClient = get_database(self.table_name)
 
-    async def create(self, url_model: Url) -> Url:
-        return await self.database.create(url_model)
+    async def create(self, model: Url) -> Url:
+        return await self.database.create(model)
 
     async def get(self, key: str) -> Union[Url, None]:
         response = await self.database.get(key)
@@ -30,3 +30,19 @@ class UrlRepository(AbstractRepository):
             return None
 
         return Url(**response[0])  # pyright:  ignore [reportGeneralTypeIssues]
+
+    async def update(self, model: Url) -> Url:
+        if not model.key:
+            raise RecordDoesNotExistExeption
+
+        response = await self.database.update(
+            key=model.key,
+            record={
+                "secret_key": model.secret_key,
+                "target_url": str(model.target_url),
+                "is_active": model.is_active,
+                "clicks": model.clicks,
+            },
+        )
+
+        return Url.construct(**response)
