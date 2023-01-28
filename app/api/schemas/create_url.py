@@ -1,4 +1,5 @@
-from app.api.schemas.url import URL, URLBase
+from app.api.schemas.url import URLBase
+from app.api.schemas.admin_url import AdminUrlResponse
 
 
 class CreateUrlRequest(URLBase):
@@ -8,17 +9,5 @@ class CreateUrlRequest(URLBase):
         }
 
 
-class CreateUrlResponse(URL):
-    key: str
-    secret_key: str
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "key": "oo0etstpl045",
-                "secret_key": "VRXAKPWG",
-                "target_url": "https://google.com",
-                "is_active": True,
-                "clicks": 0,
-            },
-        }
+class CreateUrlResponse(AdminUrlResponse):
+    pass

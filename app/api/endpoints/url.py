@@ -27,10 +27,9 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
         target_url=url.target_url,
     )
 
-    repository_response = await url_repository.create(url_model=url_domain)
-    response = CreateUrlResponse(**repository_response.dict())
-
-    return response
+    create_response = await url_repository.create(url_model=url_domain)
+    admin_response = await get_admin_info(create_response.secret_key)
+    return CreateUrlResponse(**admin_response.dict())
 
 
 @router.get(
@@ -62,7 +61,7 @@ async def forward_to_url(url_key: str):
     summary="Administration info",
     response_model=AdminUrlResponse,
 )
-async def get_admin_info(secret_key: str):
+async def get_admin_info(secret_key: str) -> AdminUrlResponse:
     url_repository = UrlRepository()
 
     if url := await url_repository.get_by_secret_key(secret_key):
