@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from pydantic import HttpUrl
 
-from app.domain import Url
+from app.domain import RecordDoesNotExistExeption, Url
 from app.repositories import UrlRepository
 from tests.overrides import DatabaseClientOverride
 
@@ -145,4 +145,50 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
         self.assertEqual(
             actual,
             None,
+        )
+
+    @patch("app.infrastructure.config.DatabaseConfig")
+    @patch("app.repositories.url_repository.get_database")
+    async def test_update__no_key__throws(
+        self, patch_get_database, patch_database_config
+    ):
+        patch_database_config.return_value.database_type = "deta-base"
+        patch_get_database.return_value = DatabaseClientOverride("url")
+        repo = UrlRepository()
+
+        model = Url(
+            secret_key="secret_key",
+            target_url=HttpUrl("https://example.com", scheme="https"),
+            is_active=True,
+            clicks=0,
+        )
+
+        with self.assertRaises(RecordDoesNotExistExeption):
+            await repo.update(model=model)
+
+    @patch("app.infrastructure.config.DatabaseConfig")
+    @patch("app.repositories.url_repository.get_database")
+    async def test_update_returns_url_model(
+        self, patch_get_database, patch_database_config
+    ):
+        patch_database_config.return_value.database_type = "deta-base"
+        patch_get_database.return_value = DatabaseClientOverride("url")
+        repo = UrlRepository()
+
+        model = Url(
+            key="test_update_returns_url_model",
+            secret_key="secret_key",
+            target_url=HttpUrl("https://example.com", scheme="https"),
+            is_active=True,
+            clicks=0,
+        )
+
+        expected = model
+        expected.clicks = 1
+
+        actual = await repo.update(model=model)
+
+        self.assertEqual(
+            actual,
+            expected,
         )
