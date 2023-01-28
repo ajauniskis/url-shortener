@@ -1,5 +1,5 @@
-from app.api.schemas.url import URLBase
 from app.api.schemas.admin_url import AdminUrlResponse
+from app.api.schemas.url import URLBase
 
 
 class CreateUrlRequest(URLBase):

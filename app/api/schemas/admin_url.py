@@ -2,7 +2,6 @@ from app.api.schemas.url import URLInfo
 from app.core import get_settings
 
 
-
 class AdminUrlResponse(URLInfo):
     pass
 
