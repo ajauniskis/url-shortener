@@ -69,18 +69,20 @@ class TestUrl(IsolatedAsyncioTestCase):
         "app.api.endpoints.url.UrlRepository",
         new=UrlRepositoryOverride,
     )
-    async def test_create_url__returns_created_url(self):
+    @patch("app.domain.secret_key.SecretKey.generate_unique")
+    async def test_create_url__returns_created_url(self, patch_generate_unique):
+        patch_generate_unique.return_value = "valid_secret_key"
         actual = self.client.post(
             "/api/url",
             json={
-                "target_url": "https://test.com",
+                "target_url": "https://google.com",
             },
         )
 
         expected = CreateUrlResponse(
-            key="key",
-            secret_key="",
-            target_url=HttpUrl("https://test.com", scheme="https"),
+            url=HttpUrl("http://127.0.0.1:8000/api/url/key", scheme="https"),
+            secret_key="valid_secret_key",
+            target_url=HttpUrl("https://google.com", scheme="https"),
             is_active=True,
             clicks=0,
         )
@@ -91,23 +93,8 @@ class TestUrl(IsolatedAsyncioTestCase):
         )
 
         self.assertEqual(
-            actual.json()["key"],
-            expected.key,
-        )
-
-        self.assertEqual(
-            actual.json()["target_url"],
-            expected.target_url,
-        )
-
-        self.assertEqual(
-            actual.json()["is_active"],
-            expected.is_active,
-        )
-
-        self.assertEqual(
-            actual.json()["clicks"],
-            expected.clicks,
+            actual.json(),
+            expected.dict(),
         )
 
     @patch(
@@ -192,7 +179,7 @@ class TestUrl(IsolatedAsyncioTestCase):
         expected = AdminUrlResponse(
             secret_key="valid_secret_key",
             target_url=HttpUrl("https://google.com", scheme="https"),
-            is_active=False,
+            is_active=True,
             url=HttpUrl(
                 get_settings().base_url + "/api/url/key",
                 scheme="https",

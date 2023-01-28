@@ -40,7 +40,7 @@ class UrlRepositoryOverride(UrlRepository):
                 key="key",
                 secret_key=secret_key,
                 target_url=HttpUrl("https://google.com", scheme="https"),
-                is_active=False,
+                is_active=True,
             )
         return None
 
