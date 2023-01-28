@@ -35,6 +35,13 @@ class UrlRepositoryOverride(UrlRepository):
             return None
 
     async def get_by_secret_key(self, secret_key: str) -> Union[Url, None]:
+        if secret_key == "valid_secret_key":
+            return Url(
+                key="key",
+                secret_key=secret_key,
+                target_url=HttpUrl("https://google.com", scheme="https"),
+                is_active=True,
+            )
         return None
 
 

@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
+from pydantic import HttpUrl
 
-from app.api.schemas import CreateUrlRequest, CreateUrlResponse
+from app.api.schemas import AdminUrlResponse, CreateUrlRequest, CreateUrlResponse
+from app.core import get_settings
 from app.domain import SecretKey
 from app.domain import Url as UrlDomainModel
 from app.repositories import UrlRepository
@@ -25,10 +27,9 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
         target_url=url.target_url,
     )
 
-    repository_response = await url_repository.create(url_model=url_domain)
-    response = CreateUrlResponse(**repository_response.dict())
-
-    return response
+    create_response = await url_repository.create(url_model=url_domain)
+    admin_response = await get_admin_info(create_response.secret_key)
+    return CreateUrlResponse(**admin_response.dict())
 
 
 @router.get(
@@ -40,9 +41,7 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
 async def forward_to_url(url_key: str):
     url_repository = UrlRepository()
 
-    url = await url_repository.get(url_key)
-
-    if url:
+    if url := await url_repository.get(url_key):
         if url.is_active:
             return url.target_url
         else:
@@ -54,4 +53,28 @@ async def forward_to_url(url_key: str):
         raise HTTPException(
             status_code=404,
             detail=f"Requested key: '{url_key}' does not exist.",
+        )
+
+
+@router.get(
+    "/admin/{secret_key}",
+    summary="Administration info",
+    response_model=AdminUrlResponse,
+)
+async def get_admin_info(secret_key: str) -> AdminUrlResponse:
+    url_repository = UrlRepository()
+
+    if url := await url_repository.get_by_secret_key(secret_key):
+        response = AdminUrlResponse(
+            **url.dict(),
+            url=HttpUrl(
+                get_settings().base_url + f"/api/url/{url.key}",
+                scheme="https",
+            ),
+        )
+        return response
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Requested secret key: '{secret_key}' does not exist.",
         )
