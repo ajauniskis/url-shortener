@@ -1,9 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
-from pydantic import HttpUrl
 
 from app.api.schemas import AdminUrlResponse, CreateUrlRequest, CreateUrlResponse
-from app.core import get_settings
 from app.domain import SecretKey
 from app.domain import Url as UrlDomainModel
 from app.repositories import UrlRepository
