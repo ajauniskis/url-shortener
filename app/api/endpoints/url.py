@@ -70,10 +70,7 @@ async def get_admin_info(secret_key: str) -> AdminUrlResponse:
     if url := await url_repository.get_by_secret_key(secret_key):
         response = AdminUrlResponse(
             **url.dict(),
-            url=HttpUrl(
-                get_settings().base_url + f"/api/url/{url.key}",
-                scheme="https",
-            ),
+            url=url.short_url,
         )
         return response
     else:
