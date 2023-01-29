@@ -11,11 +11,11 @@ class UrlRepositoryOverride(UrlRepository):
     def __init__(self) -> None:
         self.table_name = "url"
 
-    async def create(self, url_model: Url) -> Url:
-        url_model.key = "key"
-        url_model.is_active = True
-        url_model.clicks = 0
-        return url_model
+    async def create(self, model: Url) -> Url:
+        model.key = "key"
+        model.is_active = True
+        model.clicks = 0
+        return model
 
     async def get(self, key: str) -> Union[Url, None]:
         if key == "redirect_url":

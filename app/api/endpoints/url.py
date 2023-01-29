@@ -27,7 +27,7 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
         target_url=url.target_url,
     )
 
-    create_response = await url_repository.create(url_model=url_domain)
+    create_response = await url_repository.create(model=url_domain)
     admin_response = await get_admin_info(create_response.secret_key)
     return CreateUrlResponse(**admin_response.dict())
 
@@ -78,3 +78,20 @@ async def get_admin_info(secret_key: str) -> AdminUrlResponse:
             status_code=404,
             detail=f"Requested secret key: '{secret_key}' does not exist.",
         )
+
+
+@router.get(
+    "/update/update",
+)
+async def update():
+    from app.domain import Url
+
+    url_repository = UrlRepository()
+    url = Url(
+        key="75e0nzbyr565",
+        clicks=1,
+        is_active=False,
+        secret_key="DjuIVUv5",
+        target_url=HttpUrl("https://google.com", scheme="https"),
+    )
+    return await url_repository.update(url)
