@@ -9,3 +9,6 @@ class Url(BaseModel):
     target_url: HttpUrl
     is_active: bool = True
     clicks: int = 0
+
+    async def click(self):
+        self.clicks += 1

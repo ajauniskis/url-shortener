@@ -43,7 +43,7 @@ async def forward_to_url(url_key: str):
 
     if url := await url_repository.get(url_key):
         if url.is_active:
-            url.clicks += 1
+            await url.click()
             await url_repository.update(url)
 
             return url.target_url
