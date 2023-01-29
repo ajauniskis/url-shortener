@@ -159,7 +159,7 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
 
     @patch("app.core.settings.USE_CACHED_SETTINGS", True)
     async def test_update__invalid_key__throws(self):
-        with self.assertRaises(RecordDoesNotExistExeption) as exception_context:
+        with self.assertRaises(RecordDoesNotExistExeption):
             await self.database.update(
                 key="q6svtli7erih",
                 record={"value": "test_update__invalid_key__throws"},
