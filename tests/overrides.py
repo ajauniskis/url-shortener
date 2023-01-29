@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Dict, Union
 
 from pydantic import HttpUrl
 
@@ -11,11 +11,11 @@ class UrlRepositoryOverride(UrlRepository):
     def __init__(self) -> None:
         self.table_name = "url"
 
-    async def create(self, url_model: Url) -> Url:
-        url_model.key = "key"
-        url_model.is_active = True
-        url_model.clicks = 0
-        return url_model
+    async def create(self, model: Url) -> Url:
+        model.key = "key"
+        model.is_active = True
+        model.clicks = 0
+        return model
 
     async def get(self, key: str) -> Union[Url, None]:
         if key == "redirect_url":
@@ -98,5 +98,21 @@ class DatabaseClientOverride(AbstractDatabaseClient):
                     "target_url": HttpUrl("https://google.com", scheme="https"),
                 },
             ]
+        else:
+            raise NotImplementedError
+
+    async def update(
+        self,
+        key: str,
+        record: Dict[str, Union[str, Dict, float, int, bool]],
+    ) -> Dict[str, Union[str, Dict, float, int, bool]]:
+        if key == "test_update_returns_url_model":
+            return {
+                "key": "test_update_returns_url_model",
+                "secret_key": "secret_key",
+                "target_url": "https://example.com",
+                "is_active": True,
+                "clicks": 1,
+            }
         else:
             raise NotImplementedError

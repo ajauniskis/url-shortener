@@ -15,3 +15,7 @@ class AbstractRepository(ABC):
     @abstractmethod
     async def get_by_secret_key(self, secret_key: str):
         raise NotImplementedError
+
+    @abstractmethod
+    async def update(self, model):
+        raise NotImplementedError

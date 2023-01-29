@@ -1,7 +1,8 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from pydantic import BaseModel
 
+from app.domain import RecordDoesNotExistExeption
 from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 from app.infrastructure.deta.base import get_base
 
@@ -23,3 +24,13 @@ class DetaBaseClient(AbstractDatabaseClient):
         response = await self.base.query(query)
         items = response.get("items")
         return items
+
+    async def update(
+        self,
+        key: str,
+        record: Dict[str, Union[str, Dict, float, int, bool]],
+    ) -> Dict[str, Union[str, Dict, float, int, bool]]:
+        response = await self.base.update(key=key, set=record)
+        if "Key not found" in response.get("errors", []):
+            raise RecordDoesNotExistExeption
+        return {"key": response.get("key"), **response.get("set")}

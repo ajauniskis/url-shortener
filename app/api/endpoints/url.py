@@ -27,7 +27,7 @@ async def create_url(url: CreateUrlRequest) -> CreateUrlResponse:
         target_url=url.target_url,
     )
 
-    create_response = await url_repository.create(url_model=url_domain)
+    create_response = await url_repository.create(model=url_domain)
     admin_response = await get_admin_info(create_response.secret_key)
     return CreateUrlResponse(**admin_response.dict())
 
