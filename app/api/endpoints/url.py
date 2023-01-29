@@ -1,9 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
-from pydantic import HttpUrl
 
 from app.api.schemas import AdminUrlResponse, CreateUrlRequest, CreateUrlResponse
-from app.core import get_settings
 from app.domain import SecretKey
 from app.domain import Url as UrlDomainModel
 from app.repositories import UrlRepository
@@ -43,6 +41,9 @@ async def forward_to_url(url_key: str):
 
     if url := await url_repository.get(url_key):
         if url.is_active:
+            await url.click()
+            await url_repository.update(url)
+
             return url.target_url
         else:
             raise HTTPException(
@@ -67,10 +68,7 @@ async def get_admin_info(secret_key: str) -> AdminUrlResponse:
     if url := await url_repository.get_by_secret_key(secret_key):
         response = AdminUrlResponse(
             **url.dict(),
-            url=HttpUrl(
-                get_settings().base_url + f"/api/url/{url.key}",
-                scheme="https",
-            ),
+            url=url.short_url,
         )
         return response
     else:

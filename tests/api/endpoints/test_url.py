@@ -7,6 +7,7 @@ from pydantic import HttpUrl
 from app.api.schemas.admin_url import AdminUrlResponse
 from app.api.schemas.create_url import CreateUrlResponse
 from app.core.settings import get_settings
+from app.domain import Url
 from main import app
 from tests.overrides import UrlRepositoryOverride
 
@@ -121,6 +122,26 @@ class TestUrl(IsolatedAsyncioTestCase):
         "app.api.endpoints.url.UrlRepository",
         new=UrlRepositoryOverride,
     )
+    @patch("tests.overrides.UrlRepositoryOverride.update")
+    async def test_forward_to_url__increments_clicks(self, mock_update):
+        self.client.get(
+            "/api/url/redirect_url",
+            follow_redirects=False,
+        )
+
+        mock_update.assert_called_with(
+            Url(
+                key="redirect_url",
+                secret_key="secret_key",
+                target_url=HttpUrl("https://google.com", scheme="https"),
+                clicks=1,
+            )
+        )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
     async def test_forward_to_url__invalid_key__returns_404(self):
         redirect_key = "invalid_redirect_url"
         actual = self.client.get(
@@ -146,6 +167,21 @@ class TestUrl(IsolatedAsyncioTestCase):
         "app.api.endpoints.url.UrlRepository",
         new=UrlRepositoryOverride,
     )
+    @patch("tests.overrides.UrlRepositoryOverride.update")
+    async def test_forward_to_url__invalid_key__doesnt_increment_clicks(
+        self, mock_update
+    ):
+        self.client.get(
+            "/api/url/invalid_redirect_url",
+            follow_redirects=False,
+        )
+
+        mock_update.assert_not_called()
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
     async def test_forward_to_url__disabled_key__returns_400(self):
         redirect_key = "disabled_redirect_url"
         actual = self.client.get(
@@ -166,6 +202,21 @@ class TestUrl(IsolatedAsyncioTestCase):
             actual.status_code,
             400,
         )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    @patch("tests.overrides.UrlRepositoryOverride.update")
+    async def test_forward_to_url__disabled_key__doesnt_increment_clicks(
+        self, mock_update
+    ):
+        self.client.get(
+            "/api/url/disabled_redirect_url",
+            follow_redirects=False,
+        )
+
+        mock_update.assert_not_called()
 
     @patch(
         "app.api.endpoints.url.UrlRepository",

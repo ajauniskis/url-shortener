@@ -3,9 +3,9 @@ from unittest.mock import patch
 
 from aiodeta import Deta
 
+from app.domain import RecordDoesNotExistExeption
 from app.infrastructure.deta import DetaBaseClient, get_deta_base_config
 from tests.conftest import TestDomainModel
-from app.domain import RecordDoesNotExistExeption
 
 
 class TestDetabaseClient(IsolatedAsyncioTestCase):
