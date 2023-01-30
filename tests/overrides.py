@@ -42,6 +42,15 @@ class UrlRepositoryOverride(UrlRepository):
                 target_url=HttpUrl("https://google.com", scheme="https"),
                 is_active=True,
             )
+
+        if secret_key == "inactive_secret_key":
+            return Url(
+                key="key",
+                secret_key=secret_key,
+                target_url=HttpUrl("https://google.com", scheme="https"),
+                is_active=False,
+            )
+
         return None
 
     async def update(self, model: Url) -> Url:

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "url-shortener"
-version = "0.1.6a"
+version = "0.1.6b"
 description = "Url shortener API"
 authors = ["Algirdas Jauniskis <jauniskis.a@gmail.com>"]
 readme = "README.md"
