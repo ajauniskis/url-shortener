@@ -5,7 +5,7 @@ from app.api.schemas import AdminUrlResponse, CreateUrlRequest, CreateUrlRespons
 from app.domain import SecretKey
 from app.domain import Url as UrlDomainModel
 from app.repositories import UrlRepository
-from app.domain.exception import UrlIsNotActiveException
+from app.domain.exception import UrlIsActiveException, UrlIsNotActiveException
 
 router = APIRouter(
     prefix="/url",
@@ -72,6 +72,36 @@ async def get_admin_info(secret_key: str) -> AdminUrlResponse:
             url=url.short_url,
         )
         return response
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Requested secret key: '{secret_key}' does not exist.",
+        )
+
+
+@router.post(
+    "/admin/activate/{secret_key}",
+    summary="Deactivate short URL",
+)
+async def activate_url(secret_key: str):
+    url_repository = UrlRepository()
+
+    if url := await url_repository.get_by_secret_key(secret_key):
+        try:
+            await url.activate()
+            await url_repository.update(url)
+
+            response = AdminUrlResponse(
+                **url.dict(),
+                url=url.short_url,
+            )
+            return response
+        except UrlIsActiveException:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Requested secret key: '{secret_key}' is already active.",
+            )
+
     else:
         raise HTTPException(
             status_code=404,
