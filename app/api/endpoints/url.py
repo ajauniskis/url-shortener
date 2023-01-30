@@ -81,7 +81,8 @@ async def get_admin_info(secret_key: str) -> AdminUrlResponse:
 
 @router.post(
     "/admin/activate/{secret_key}",
-    summary="Deactivate short URL",
+    summary="Activate short URL",
+    response_model=AdminUrlResponse,
 )
 async def activate_url(secret_key: str):
     url_repository = UrlRepository()
@@ -112,8 +113,9 @@ async def activate_url(secret_key: str):
 @router.post(
     "/admin/deactivate/{secret_key}",
     summary="Deactivate short URL",
+    response_model=AdminUrlResponse,
 )
-async def deactivate_url(secret_key: str):
+async def deactivate_url(secret_key: str) -> AdminUrlResponse:
     url_repository = UrlRepository()
 
     if url := await url_repository.get_by_secret_key(secret_key):
@@ -132,6 +134,22 @@ async def deactivate_url(secret_key: str):
                 detail=f"Requested secret key: '{secret_key}' is not active.",
             )
 
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Requested secret key: '{secret_key}' does not exist.",
+        )
+
+
+@router.delete(
+    "/admin/{secret_key}",
+    summary="Delete short URL",
+    status_code=204,
+)
+async def delete_url(secret_key: str) -> None:
+    url_repository = UrlRepository()
+    if url := await url_repository.get_by_secret_key(secret_key):
+        await url_repository.delete(model=url)
     else:
         raise HTTPException(
             status_code=404,
