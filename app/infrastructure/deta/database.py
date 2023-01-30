@@ -34,3 +34,6 @@ class DetaBaseClient(AbstractDatabaseClient):
         if "Key not found" in response.get("errors", []):
             raise RecordDoesNotExistExeption
         return {"key": response.get("key"), **response.get("set")}
+
+    async def delete(self, key: str) -> None:
+        await self.base.delete(key)

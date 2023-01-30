@@ -25,3 +25,7 @@ class AbstractDatabaseClient(ABC):
         record: Dict[str, Union[str, Dict, float, int, bool]],
     ) -> Dict[str, Union[str, Dict, float, int, bool]]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def delete(self, key: str) -> None:
+        raise NotImplementedError
