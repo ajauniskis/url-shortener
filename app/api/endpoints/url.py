@@ -141,7 +141,7 @@ async def deactivate_url(secret_key: str) -> AdminUrlResponse:
 
 @router.delete(
     "/admin/{secret_key}",
-    summary="Deactivate short URL",
+    summary="Delete short URL",
     status_code=204,
 )
 async def delete_url(secret_key: str) -> None:
