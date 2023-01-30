@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, HttpUrl
 
 from app.core import get_settings
-from app.domain.exception import RecordDoesNotExistExeption
+from app.domain.exception import RecordDoesNotExistExeption, UrlIsNotActiveException
 
 
 class Url(BaseModel):
@@ -24,3 +24,9 @@ class Url(BaseModel):
 
     async def click(self) -> None:
         self.clicks += 1
+
+    async def deactivate(self) -> None:
+        if self.is_active:
+            self.is_active = False
+        else:
+            raise UrlIsNotActiveException
