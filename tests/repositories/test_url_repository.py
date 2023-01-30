@@ -192,3 +192,45 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
             actual,
             expected,
         )
+
+    @patch("app.infrastructure.config.DatabaseConfig")
+    @patch("app.repositories.url_repository.get_database")
+    async def test_delete__returns_none(
+        self, patch_get_database, patch_database_config
+    ):
+        patch_database_config.return_value.database_type = "deta-base"
+        patch_get_database.return_value = DatabaseClientOverride("url")
+        repo = UrlRepository()
+
+        model = Url(
+            key="test_delete__returns_none",
+            secret_key="secret_key",
+            target_url=HttpUrl("https://example.com", scheme="https"),
+            is_active=True,
+            clicks=0,
+        )
+
+        actual = await repo.delete(model=model)
+
+        self.assertIsNone(
+            actual,
+        )
+
+    @patch("app.infrastructure.config.DatabaseConfig")
+    @patch("app.repositories.url_repository.get_database")
+    async def test_delete__no_key__throws(
+        self, patch_get_database, patch_database_config
+    ):
+        patch_database_config.return_value.database_type = "deta-base"
+        patch_get_database.return_value = DatabaseClientOverride("url")
+        repo = UrlRepository()
+
+        model = Url(
+            secret_key="secret_key",
+            target_url=HttpUrl("https://example.com", scheme="https"),
+            is_active=True,
+            clicks=0,
+        )
+
+        with self.assertRaises(RecordDoesNotExistExeption):
+            await repo.delete(model=model)

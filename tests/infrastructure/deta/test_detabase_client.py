@@ -164,3 +164,20 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
                 key="q6svtli7erih",
                 record={"value": "test_update__invalid_key__throws"},
             )
+
+    @patch("app.core.settings.USE_CACHED_SETTINGS", True)
+    async def test_delete__deletes_record(self):
+        await self.base.put(
+            [
+                TestDomainModel(
+                    key="test_delete__deletes_record",
+                    value="test_delete__deletes_record",
+                ).dict()
+            ],
+        )
+
+        await self.database.delete(key="test_delete__deletes_record")
+        actual = await self.database.get(key="test_delete__deletes_record")
+        self.assertIsNone(
+            actual.get("value", None),
+        )

@@ -119,3 +119,6 @@ class DatabaseClientOverride(AbstractDatabaseClient):
             }
         else:
             raise NotImplementedError
+
+    async def delete(self, key: str) -> None:
+        return
