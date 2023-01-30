@@ -46,3 +46,9 @@ class UrlRepository(AbstractRepository):
         )
 
         return Url.construct(**response)
+
+    async def delete(self, model: Url) -> None:
+        if not model.key:
+            raise RecordDoesNotExistExeption
+
+        await self.database.delete(key=model.key)
