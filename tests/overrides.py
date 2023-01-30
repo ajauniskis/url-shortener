@@ -2,7 +2,7 @@ from typing import Dict, Union
 
 from pydantic import HttpUrl
 
-from app.domain import Url
+from app.domain import RecordDoesNotExistExeption, Url
 from app.infrastructure import AbstractDatabaseClient
 from app.repositories import UrlRepository
 
@@ -119,3 +119,6 @@ class DatabaseClientOverride(AbstractDatabaseClient):
             }
         else:
             raise NotImplementedError
+
+    async def delete(self, key: str) -> None:
+        return
