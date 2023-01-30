@@ -270,3 +270,79 @@ class TestUrl(IsolatedAsyncioTestCase):
             actual.status_code,
             404,
         )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_deactivate_url__returns_inactive_url(self):
+        actual = self.client.post(
+            "/api/url/admin/deactivate/valid_secret_key",
+        )
+
+        expected = AdminUrlResponse(
+            secret_key="valid_secret_key",
+            target_url=HttpUrl("https://google.com", scheme="https"),
+            is_active=False,
+            url=HttpUrl(
+                get_settings().base_url + "/api/url/key",
+                scheme="https",
+            ),
+            clicks=0,
+        )
+
+        self.assertEqual(
+            actual.json(),
+            expected.dict(),
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            200,
+        )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_deactivate_url__inactive_url__returns_400(self):
+        actual = self.client.post(
+            "/api/url/admin/deactivate/inactive_secret_key",
+        )
+
+        expected = {
+            "detail": "Requested secret key: 'inactive_secret_key' is not active."
+        }
+
+        self.assertEqual(
+            actual.json(),
+            expected,
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            400,
+        )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_deactivate_url__invalid_secret_key__returns_404(self):
+        actual = self.client.post(
+            "/api/url/admin/deactivate/invalid_secret_key",
+        )
+
+        expected = {
+            "detail": "Requested secret key: 'invalid_secret_key' does not exist."
+        }
+
+        self.assertEqual(
+            actual.json(),
+            expected,
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            404,
+        )
