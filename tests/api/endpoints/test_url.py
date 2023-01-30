@@ -346,3 +346,79 @@ class TestUrl(IsolatedAsyncioTestCase):
             actual.status_code,
             404,
         )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_activate_url__returns_active_url(self):
+        actual = self.client.post(
+            "/api/url/admin/activate/inactive_secret_key",
+        )
+
+        expected = AdminUrlResponse(
+            secret_key="inactive_secret_key",
+            target_url=HttpUrl("https://google.com", scheme="https"),
+            is_active=True,
+            url=HttpUrl(
+                get_settings().base_url + "/api/url/key",
+                scheme="https",
+            ),
+            clicks=0,
+        )
+
+        self.assertEqual(
+            actual.json(),
+            expected.dict(),
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            200,
+        )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_activate_url__active_url__returns_400(self):
+        actual = self.client.post(
+            "/api/url/admin/activate/valid_secret_key",
+        )
+
+        expected = {
+            "detail": "Requested secret key: 'valid_secret_key' is already active."
+        }
+
+        self.assertEqual(
+            actual.json(),
+            expected,
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            400,
+        )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_activate_url__invalid_secret_key__returns_404(self):
+        actual = self.client.post(
+            "/api/url/admin/activate/invalid_secret_key",
+        )
+
+        expected = {
+            "detail": "Requested secret key: 'invalid_secret_key' does not exist."
+        }
+
+        self.assertEqual(
+            actual.json(),
+            expected,
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            404,
+        )
