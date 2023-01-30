@@ -2,7 +2,7 @@ from typing import Dict, Union
 
 from pydantic import HttpUrl
 
-from app.domain import RecordDoesNotExistExeption, Url
+from app.domain import Url
 from app.infrastructure import AbstractDatabaseClient
 from app.repositories import UrlRepository
 
