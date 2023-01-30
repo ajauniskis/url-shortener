@@ -4,8 +4,8 @@ from fastapi.responses import RedirectResponse
 from app.api.schemas import AdminUrlResponse, CreateUrlRequest, CreateUrlResponse
 from app.domain import SecretKey
 from app.domain import Url as UrlDomainModel
-from app.repositories import UrlRepository
 from app.domain.exception import UrlIsActiveException, UrlIsNotActiveException
+from app.repositories import UrlRepository
 
 router = APIRouter(
     prefix="/url",
