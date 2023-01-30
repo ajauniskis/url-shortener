@@ -4,3 +4,7 @@ class RecordDoesNotExistExeption(BaseException):
 
 class UrlIsNotActiveException(BaseException):
     pass
+
+
+class UrlIsActiveException(BaseException):
+    pass

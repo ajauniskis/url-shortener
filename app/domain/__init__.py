@@ -1,4 +1,8 @@
-from app.domain.exception import RecordDoesNotExistExeption, UrlIsNotActiveException
+from app.domain.exception import (
+    RecordDoesNotExistExeption,
+    UrlIsActiveException,
+    UrlIsNotActiveException,
+)
 from app.domain.secret_key import SecretKey
 from app.domain.url import Url
 
@@ -7,4 +11,5 @@ __all__ = [
     "SecretKey",
     "RecordDoesNotExistExeption",
     "UrlIsNotActiveException",
+    "UrlIsActiveException",
 ]
