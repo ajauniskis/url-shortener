@@ -233,4 +233,4 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
         )
 
         with self.assertRaises(RecordDoesNotExistExeption):
-            actual = await repo.delete(model=model)
+            await repo.delete(model=model)
