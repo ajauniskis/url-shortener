@@ -3,7 +3,11 @@ from unittest import IsolatedAsyncioTestCase
 from pydantic import HttpUrl
 
 from app.core import get_settings
-from app.domain.exception import RecordDoesNotExistExeption, UrlIsNotActiveException
+from app.domain.exception import (
+    RecordDoesNotExistExeption,
+    UrlIsActiveException,
+    UrlIsNotActiveException,
+)
 from app.domain.url import Url
 
 
@@ -57,3 +61,13 @@ class TestUrl(IsolatedAsyncioTestCase):
         self.test_model.is_active = False
         with self.assertRaises(UrlIsNotActiveException):
             await self.test_model.deactivate()
+
+    async def test_activate__activates_url(self):
+        self.test_model.is_active = False
+        await self.test_model.activate()
+
+        self.assertTrue(self.test_model.is_active)
+
+    async def test_activate__active_url__throws(self):
+        with self.assertRaises(UrlIsActiveException):
+            await self.test_model.activate()
