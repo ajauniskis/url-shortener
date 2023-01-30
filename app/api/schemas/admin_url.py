@@ -8,9 +8,9 @@ class AdminUrlResponse(URLInfo):
     class Config:
         schema_extra = {
             "example": {
-                "url": f"{get_settings().base_url}/api/url/oo0etstpl045",
-                "secret_key": "VRXAKPWG",
-                "target_url": "https://google.com",
+                "url": f"{get_settings().base_url}/api/url/sampleUrlKey",
+                "secret_key": "SAMPLESECRETKEY",
+                "target_url": "https://example.com",
                 "is_active": True,
                 "clicks": 0,
             },
