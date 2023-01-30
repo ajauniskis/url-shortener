@@ -56,6 +56,9 @@ class UrlRepositoryOverride(UrlRepository):
     async def update(self, model: Url) -> Url:
         return model
 
+    async def delete(self, model: Url) -> None:
+        return
+
 
 class DatabaseClientOverride(AbstractDatabaseClient):
     async def create(self, model):

@@ -346,3 +346,40 @@ class TestUrl(IsolatedAsyncioTestCase):
             actual.status_code,
             404,
         )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_delete_url__returns_204(self):
+        actual = self.client.delete(
+            "/api/url/admin/valid_secret_key",
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            204,
+        )
+
+    @patch(
+        "app.api.endpoints.url.UrlRepository",
+        new=UrlRepositoryOverride,
+    )
+    async def test_delete_url__invalid_secret_key__returns_404(self):
+        actual = self.client.delete(
+            "/api/url/admin/invalid_secret_key",
+        )
+
+        expected = {
+            "detail": "Requested secret key: 'invalid_secret_key' does not exist."
+        }
+
+        self.assertEqual(
+            actual.json(),
+            expected,
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            404,
+        )
