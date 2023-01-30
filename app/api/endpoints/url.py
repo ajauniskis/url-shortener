@@ -82,6 +82,7 @@ async def get_admin_info(secret_key: str) -> AdminUrlResponse:
 @router.post(
     "/admin/activate/{secret_key}",
     summary="Activate short URL",
+    response_model=AdminUrlResponse,
 )
 async def activate_url(secret_key: str):
     url_repository = UrlRepository()
@@ -112,6 +113,7 @@ async def activate_url(secret_key: str):
 @router.post(
     "/admin/deactivate/{secret_key}",
     summary="Deactivate short URL",
+    response_model=AdminUrlResponse,
 )
 async def deactivate_url(secret_key: str) -> AdminUrlResponse:
     url_repository = UrlRepository()
