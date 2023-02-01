@@ -8,6 +8,7 @@ from app.api.schemas.admin_url import AdminUrlResponse
 from app.api.schemas.create_url import CreateUrlResponse
 from app.core.settings import get_settings
 from app.domain import Url
+from app.repositories.url_repository import UrlRepository
 from main import app
 from tests.overrides import UrlRepositoryOverride
 
@@ -15,6 +16,9 @@ from tests.overrides import UrlRepositoryOverride
 class TestUrl(IsolatedAsyncioTestCase):
     async def asyncSetUp(self) -> None:
         self.client = TestClient(app)
+        app.dependency_overrides[
+            UrlRepository.get_repository
+        ] = UrlRepositoryOverride.get_repository
 
     async def test_create_url__invalid_url__returns_422(self):
         actual = self.client.post(
@@ -66,10 +70,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             },
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     @patch("app.domain.secret_key.SecretKey.generate_unique")
     async def test_create_url__returns_created_url(self, patch_generate_unique):
         patch_generate_unique.return_value = "valid_secret_key"
@@ -98,10 +98,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             expected.dict(),
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_forward_to_url__redirects_to_url(self):
         actual = self.client.get(
             "/api/url/redirect_url",
@@ -118,10 +114,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             307,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     @patch("tests.overrides.UrlRepositoryOverride.update")
     async def test_forward_to_url__increments_clicks(self, mock_update):
         self.client.get(
@@ -138,10 +130,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             )
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_forward_to_url__invalid_key__returns_404(self):
         redirect_key = "invalid_redirect_url"
         actual = self.client.get(
@@ -163,10 +151,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             404,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     @patch("tests.overrides.UrlRepositoryOverride.update")
     async def test_forward_to_url__invalid_key__doesnt_increment_clicks(
         self, mock_update
@@ -178,10 +162,6 @@ class TestUrl(IsolatedAsyncioTestCase):
 
         mock_update.assert_not_called()
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_forward_to_url__disabled_key__returns_400(self):
         redirect_key = "disabled_redirect_url"
         actual = self.client.get(
@@ -203,10 +183,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             400,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     @patch("tests.overrides.UrlRepositoryOverride.update")
     async def test_forward_to_url__disabled_key__doesnt_increment_clicks(
         self, mock_update
@@ -218,10 +194,6 @@ class TestUrl(IsolatedAsyncioTestCase):
 
         mock_update.assert_not_called()
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_get_admin_info__returns_admin_response(self):
         actual = self.client.get(
             "/api/url/admin/valid_secret_key",
@@ -248,10 +220,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             200,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_get_admin_info__invalid_secret_key__returns_404(self):
         actual = self.client.get(
             "/api/url/admin/invalid_secret_key",
@@ -271,10 +239,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             404,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_deactivate_url__returns_inactive_url(self):
         actual = self.client.post(
             "/api/url/admin/deactivate/valid_secret_key",
@@ -301,10 +265,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             200,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_deactivate_url__inactive_url__returns_400(self):
         actual = self.client.post(
             "/api/url/admin/deactivate/inactive_secret_key",
@@ -324,10 +284,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             400,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_deactivate_url__invalid_secret_key__returns_404(self):
         actual = self.client.post(
             "/api/url/admin/deactivate/invalid_secret_key",
@@ -347,10 +303,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             404,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_activate_url__returns_active_url(self):
         actual = self.client.post(
             "/api/url/admin/activate/inactive_secret_key",
@@ -377,10 +329,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             200,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_activate_url__active_url__returns_400(self):
         actual = self.client.post(
             "/api/url/admin/activate/valid_secret_key",
@@ -400,10 +348,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             400,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_activate_url__invalid_secret_key__returns_404(self):
         actual = self.client.post(
             "/api/url/admin/activate/invalid_secret_key",
@@ -423,10 +367,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             404,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_delete_url__returns_204(self):
         actual = self.client.delete(
             "/api/url/admin/valid_secret_key",
@@ -437,10 +377,6 @@ class TestUrl(IsolatedAsyncioTestCase):
             204,
         )
 
-    @patch(
-        "app.api.endpoints.url.UrlRepository",
-        new=UrlRepositoryOverride,
-    )
     async def test_delete_url__invalid_secret_key__returns_404(self):
         actual = self.client.delete(
             "/api/url/admin/invalid_secret_key",
