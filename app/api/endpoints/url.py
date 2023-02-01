@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 
-from app.api.schemas import AdminUrlResponse, CreateUrlRequest, CreateUrlResponse
+from app.api.schemas import (
+    AdminUrlResponse,
+    CreateUrlRequest,
+    CreateUrlResponse,
+    PeekUrlResponse,
+)
 from app.domain import SecretKey
 from app.domain import Url as UrlDomainModel
 from app.domain.exception import UrlIsActiveException, UrlIsNotActiveException
@@ -22,6 +27,16 @@ async def _get_by_secret_key(
         raise HTTPException(
             status_code=404,
             detail=f"Requested secret key: '{secret_key}' does not exist.",
+        )
+
+
+async def _get(url_repository: UrlRepository, key: str) -> UrlDomainModel:
+    if url := await url_repository.get(key):
+        return url
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Requested key: '{key}' does not exist.",
         )
 
 
@@ -54,21 +69,16 @@ async def forward_to_url(
     url_key: str,
     url_repository: UrlRepository = Depends(UrlRepository.get_repository),
 ):
-    if url := await url_repository.get(url_key):
-        if url.is_active:
-            await url.click()
-            await url_repository.update(url)
+    url = await _get(url_repository, url_key)
+    if url.is_active:
+        await url.click()
+        await url_repository.update(url)
 
-            return url.target_url
-        else:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Requested key: '{url_key}' is not active.",
-            )
+        return url.target_url
     else:
         raise HTTPException(
-            status_code=404,
-            detail=f"Requested key: '{url_key}' does not exist.",
+            status_code=400,
+            detail=f"Requested key: '{url_key}' is not active.",
         )
 
 
@@ -152,3 +162,16 @@ async def delete_url(
 ) -> None:
     url = await _get_by_secret_key(url_repository, secret_key)
     await url_repository.delete(model=url)
+
+
+@router.get(
+    "/peek/{url_key}",
+    summary="Peek target URL",
+    response_model=PeekUrlResponse,
+)
+async def peek_url(
+    url_key,
+    url_repository: UrlRepository = Depends(UrlRepository.get_repository),
+) -> PeekUrlResponse:
+    url = await _get(url_repository, url_key)
+    return PeekUrlResponse(target_url=url.target_url)
