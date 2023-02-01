@@ -57,4 +57,4 @@ class UrlRepository(AbstractRepository):
 
     @classmethod
     async def get_repository(cls) -> UrlRepository:
-        return cls()
+        return cls()  # pragma: no cover
