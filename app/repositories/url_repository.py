@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Union
 
 from app.domain import RecordDoesNotExistExeption, Url
@@ -52,3 +54,7 @@ class UrlRepository(AbstractRepository):
             raise RecordDoesNotExistExeption
 
         await self.database.delete(key=model.key)
+
+    @classmethod
+    async def get_repository(cls) -> UrlRepository:
+        return cls()
