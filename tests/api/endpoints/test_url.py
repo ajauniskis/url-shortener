@@ -6,6 +6,7 @@ from pydantic import HttpUrl
 
 from app.api.schemas.admin_url import AdminUrlResponse
 from app.api.schemas.create_url import CreateUrlResponse
+from app.api.schemas.peek_url import PeekUrlResponse
 from app.core.settings import get_settings
 from app.domain import Url
 from app.repositories.url_repository import UrlRepository
@@ -385,6 +386,38 @@ class TestUrl(IsolatedAsyncioTestCase):
         expected = {
             "detail": "Requested secret key: 'invalid_secret_key' does not exist."
         }
+
+        self.assertEqual(
+            actual.json(),
+            expected,
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            404,
+        )
+
+    async def test_peek_url__returns_target_url(self):
+        actual = self.client.get("/api/url/peek/redirect_url")
+
+        expected = PeekUrlResponse(
+            target_url=HttpUrl("https://google.com", scheme="https")
+        )
+
+        self.assertEqual(
+            actual.json(),
+            expected.dict(),
+        )
+
+        self.assertEqual(
+            actual.status_code,
+            200,
+        )
+
+    async def test_peek_url__invalid_key__returns_404(self):
+        actual = self.client.get("/api/url/peek/invalid_key")
+
+        expected = {"detail": "Requested key: 'invalid_key' does not exist."}
 
         self.assertEqual(
             actual.json(),
