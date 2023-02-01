@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Dict, Union
 
 from pydantic import HttpUrl
@@ -58,6 +60,10 @@ class UrlRepositoryOverride(UrlRepository):
 
     async def delete(self, model: Url) -> None:
         return
+
+    @classmethod
+    async def get_repository(cls) -> UrlRepositoryOverride:
+        return cls()
 
 
 class DatabaseClientOverride(AbstractDatabaseClient):
