@@ -13,6 +13,18 @@ router = APIRouter(
 )
 
 
+async def _get_by_secret_key(
+    url_repository: UrlRepository, secret_key: str
+) -> UrlDomainModel:
+    if url := await url_repository.get_by_secret_key(secret_key):
+        return url
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Requested secret key: '{secret_key}' does not exist.",
+        )
+
+
 @router.post(
     "/",
     summary="Create short URL",
@@ -69,17 +81,12 @@ async def get_admin_info(
     secret_key: str,
     url_repository: UrlRepository = Depends(UrlRepository.get_repository),
 ) -> AdminUrlResponse:
-    if url := await url_repository.get_by_secret_key(secret_key):
-        response = AdminUrlResponse(
-            **url.dict(),
-            url=url.short_url,
-        )
-        return response
-    else:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Requested secret key: '{secret_key}' does not exist.",
-        )
+    url = await _get_by_secret_key(url_repository, secret_key)
+    response = AdminUrlResponse(
+        **url.dict(),
+        url=url.short_url,
+    )
+    return response
 
 
 @router.post(
@@ -91,26 +98,20 @@ async def activate_url(
     secret_key: str,
     url_repository: UrlRepository = Depends(UrlRepository.get_repository),
 ):
-    if url := await url_repository.get_by_secret_key(secret_key):
-        try:
-            await url.activate()
-            await url_repository.update(url)
+    url = await _get_by_secret_key(url_repository, secret_key)
+    try:
+        await url.activate()
+        await url_repository.update(url)
 
-            response = AdminUrlResponse(
-                **url.dict(),
-                url=url.short_url,
-            )
-            return response
-        except UrlIsActiveException:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Requested secret key: '{secret_key}' is already active.",
-            )
-
-    else:
+        response = AdminUrlResponse(
+            **url.dict(),
+            url=url.short_url,
+        )
+        return response
+    except UrlIsActiveException:
         raise HTTPException(
-            status_code=404,
-            detail=f"Requested secret key: '{secret_key}' does not exist.",
+            status_code=400,
+            detail=f"Requested secret key: '{secret_key}' is already active.",
         )
 
 
@@ -123,26 +124,20 @@ async def deactivate_url(
     secret_key: str,
     url_repository: UrlRepository = Depends(UrlRepository.get_repository),
 ) -> AdminUrlResponse:
-    if url := await url_repository.get_by_secret_key(secret_key):
-        try:
-            await url.deactivate()
-            await url_repository.update(url)
+    url = await _get_by_secret_key(url_repository, secret_key)
+    try:
+        await url.deactivate()
+        await url_repository.update(url)
 
-            response = AdminUrlResponse(
-                **url.dict(),
-                url=url.short_url,
-            )
-            return response
-        except UrlIsNotActiveException:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Requested secret key: '{secret_key}' is not active.",
-            )
-
-    else:
+        response = AdminUrlResponse(
+            **url.dict(),
+            url=url.short_url,
+        )
+        return response
+    except UrlIsNotActiveException:
         raise HTTPException(
-            status_code=404,
-            detail=f"Requested secret key: '{secret_key}' does not exist.",
+            status_code=400,
+            detail=f"Requested secret key: '{secret_key}' is not active.",
         )
 
 
@@ -155,10 +150,5 @@ async def delete_url(
     secret_key: str,
     url_repository: UrlRepository = Depends(UrlRepository.get_repository),
 ) -> None:
-    if url := await url_repository.get_by_secret_key(secret_key):
-        await url_repository.delete(model=url)
-    else:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Requested secret key: '{secret_key}' does not exist.",
-        )
+    url = await _get_by_secret_key(url_repository, secret_key)
+    await url_repository.delete(model=url)
