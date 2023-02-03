@@ -17,9 +17,8 @@ from qrcode.image.styles.moduledrawers.pil import (
 if TYPE_CHECKING:
     from typing import Optional, Union
 
-    from qrcode.image.styledpil import StyledPilImage
-    from qrcode.image.styles.moduledrawers.pil import StyledPilQRModuleDrawer
     from qrcode.image.pil import PilImage
+    from qrcode.image.styles.moduledrawers.pil import StyledPilQRModuleDrawer
 
 QR_CODE_RENDER_STYLES = Literal[
     "circle",
