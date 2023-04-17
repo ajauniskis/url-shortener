@@ -33,7 +33,7 @@ jobs:
         run: |
           curl -fsSL https://deta.space/assets/space-cli.sh | sh
           echo ${{ secrets.DETA_ACCESS_TOKEN }} | ~/.detaspace/bin/space login --with-token
-          ~/.detaspace/bin/space link ${{ secrets.DETA_PROJECT_ID }}
+          ~/.detaspace/bin/space link -i ${{ secrets.DETA_PROJECT_ID }}
 
       # - name: Clone Deta Metadata
       #   env:
