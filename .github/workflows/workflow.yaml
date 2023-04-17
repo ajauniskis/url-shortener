@@ -28,8 +28,6 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: development
-      # deta_name: "app"
-      # deta_project: "dev-url-shortener"
     needs: test
     secrets: inherit
 
@@ -39,7 +37,5 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: production
-      # deta_name: "app"
-      # deta_project: "url-shortener"
     needs: test
     secrets: inherit
