@@ -9,7 +9,7 @@ USE_CACHED_SETTINGS = os.environ.get("USE_CACHED_SETTINGS", "TRUE").lower() == "
 
 
 class Settings(BaseSettings):
-    env: str
+    env: str = "prod"
     deta_space_app_hostname: str
     secret_key_length: int = 8
 

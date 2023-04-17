@@ -6,7 +6,7 @@ from app.core import USE_CACHED_SETTINGS, logger
 
 
 class DatabaseConfig(BaseSettings):
-    database_type: str
+    database_type: str = "deta-base"
 
     class Config:
         env_file = ".env"
