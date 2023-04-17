@@ -27,7 +27,7 @@ class TestUrl(IsolatedAsyncioTestCase):
     async def test_short_url__returns_short_url(self):
         actual = self.test_model.short_url
         expected = HttpUrl(
-            get_settings().base_url + f"/api/url/{self.test_model.key}",
+            get_settings().deta_space_app_hostname + f"/api/url/{self.test_model.key}",
             scheme="https",
         )
 
