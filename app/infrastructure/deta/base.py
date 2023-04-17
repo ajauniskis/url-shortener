@@ -13,7 +13,6 @@ def _get_cached_base(base_name: str) -> _Base:
 
     deta = Deta(
         project_key=deta_base_config.deta_project_key,
-        project_id=deta_base_config.deta_project_id,
     )
 
     return deta.Base(base_name)
@@ -27,7 +26,6 @@ def get_base(base_name: str) -> _Base:
 
         deta = Deta(
             project_key=deta_base_config.deta_project_key,
-            project_id=deta_base_config.deta_project_id,
         )
 
         return deta.Base(base_name)

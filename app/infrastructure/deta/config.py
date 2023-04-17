@@ -5,7 +5,6 @@ from pydantic import BaseSettings
 
 class DetaBaseConfig(BaseSettings):
     deta_project_key: str
-    deta_project_id: str
 
     class Config:
         env_file = ".env"
