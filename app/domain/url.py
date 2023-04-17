@@ -22,7 +22,7 @@ class Url(BaseModel):
         if not self.key:
             raise RecordDoesNotExistExeption
         return HttpUrl(
-            get_settings().base_url + f"/api/url/{self.key}",
+            get_settings().deta_space_app_hostname + f"/api/url/{self.key}",
             scheme="https",
         )
 
