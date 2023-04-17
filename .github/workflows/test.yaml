@@ -7,12 +7,10 @@ on:
         type: string
 
 jobs:
-
   python-test:
     name: Run Pytest
     runs-on: ubuntu-latest
     steps:
-
       - name: Check out Git repository
         uses: actions/checkout@v3
 
@@ -23,15 +21,14 @@ jobs:
 
       - name: Set Test Environment Variables
         run: |
-          cat .env.template >> .env 
+          cat .env.template >> .env
 
       - name: Pytest
         env:
           ENV: "test"
-          BASE_URL: "http://127.0.0.1:8000"
+          DETA_SPACE_APP_HOSTNAME: "http://127.0.0.1:8000"
           DATABASE_TYPE: ${{ secrets.TEST_DETA_DATABASE_TYPE }}
           DETA_PROJECT_KEY: ${{ secrets.TEST_DETA_PROJECT_KEY }}
-          DETA_PROJECT_ID: ${{ secrets.TEST_DETA_PROJECT_ID }}
         run: poetry run pytest -v --cov app --cov-report=xml
 
       - name: Upload coverage to Codecov

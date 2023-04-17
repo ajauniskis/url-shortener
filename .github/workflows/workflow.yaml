@@ -1,22 +1,19 @@
 name: Main Workflow
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-
   lint:
     name: Lint
     uses: ./.github/workflows/lint.yaml
-    with: 
+    with:
       ENFORCE_BLACK: "true"
       ENFORCE_PYRIGHT: "true"
       ENFORCE_BANDIT: "true"
       ENFORCE_FLAKE8: "true"
-      deta_name: "app"
-      deta_project: "url-shortener"
     secrets: inherit
 
   test:
@@ -31,8 +28,8 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: development
-      deta_name: "app"
-      deta_project: "dev-url-shortener"
+      # deta_name: "app"
+      # deta_project: "dev-url-shortener"
     needs: test
     secrets: inherit
 
@@ -42,7 +39,7 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: production
-      deta_name: "app"
-      deta_project: "url-shortener"
+      # deta_name: "app"
+      # deta_project: "url-shortener"
     needs: test
     secrets: inherit

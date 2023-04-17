@@ -1,28 +1,26 @@
 name: Deploy
-on: 
+on:
   workflow_call:
     inputs:
       environment:
         type: string
         default: development
-      deta_name:
-        type: string
-      deta_project:
-        type: string
+      # deta_name:
+      #   type: string
+      # deta_project:
+      #   type: string
       PYTHON_VERSION:
         default: "3.9"
         type: string
 
 jobs:
-
   deploy:
     name: Deploy
-    environment: 
+    environment:
       name: ${{ inputs.environment }}
-      url: ${{ vars.BASE_URL }}
+      url: ${{ vars.DETA_SPACE_APP_HOSTNAME }}
     runs-on: ubuntu-latest
     steps:
-
       - name: Check out Git repository
         uses: actions/checkout@v3
 
@@ -31,49 +29,49 @@ jobs:
         with:
           PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
 
-      - name: Install Deta CLI
+      - name: Install Space CLI
         run: |
-          curl -fsSL https://get.deta.dev/cli.sh | sh
+          curl -fsSL https://deta.space/assets/space-cli.sh | sh
+          ~/.detaspace/bin/space login --with-token ${{ secrets.SPACE_TOKEN }}
 
-      - name: Clone Deta Metadata
-        env:
-          DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
-        run: |
-          ~/.deta/bin/deta clone --name ${{ inputs.deta_name }} --project ${{ inputs.deta_project }} tmp/
-          cp -r tmp/.deta .
+      # - name: Clone Deta Metadata
+      #   env:
+      #     DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+      #   run: |
+      #     ~/.deta/bin/deta clone --name ${{ inputs.deta_name }} --project ${{ inputs.deta_project }} tmp/
+      #     cp -r tmp/.deta .
 
       - name: Export dependencies
         run: |
           poetry export -o requirements.txt --without-hashes
 
-      - name: Set Deta Environment Variables
-        env:
-          DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
-          ENV: ${{ vars.ENV }}
-          BASE_URL: ${{ vars.BASE_URL }}
-          DATABASE_TYPE: ${{ vars.DATABASE_TYPE }}
-          DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
-          DETA_PROJECT_ID: ${{ vars.DETA_PROJECT_ID }}
-        run: |
-          echo ENV="$ENV">> .env
-          echo BASE_URL="$BASE_URL">> .env
-          echo DATABASE_TYPE="$DATABASE_TYPE">> .env
-          echo DETA_PROJECT_KEY="$DETA_PROJECT_KEY">> .env
-          echo DETA_PROJECT_ID="$DETA_PROJECT_ID">> .env
-          ~/.deta/bin/deta update --env .env
+      # - name: Set Deta Environment Variables
+      #   env:
+      #     DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
+      #     ENV: ${{ vars.ENV }}
+      #     BASE_URL: ${{ vars.BASE_URL }}
+      #     DATABASE_TYPE: ${{ vars.DATABASE_TYPE }}
+      #     DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
+      #     DETA_PROJECT_ID: ${{ vars.DETA_PROJECT_ID }}
+      #   run: |
+      #     echo ENV="$ENV">> .env
+      #     echo BASE_URL="$BASE_URL">> .env
+      #     echo DATABASE_TYPE="$DATABASE_TYPE">> .env
+      #     echo DETA_PROJECT_KEY="$DETA_PROJECT_KEY">> .env
+      #     echo DETA_PROJECT_ID="$DETA_PROJECT_ID">> .env
+      #     ~/.deta/bin/deta update --env .env
 
-      - name: Deploy to Deta
+      - name: Push to Space
         env:
           DETA_ACCESS_TOKEN: ${{ secrets.DETA_ACCESS_TOKEN }}
         run: |
-          ~/.deta/bin/deta deploy
+          ~/.detaspace/bin/space push
 
   tag-release:
     name: Push Tag
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-
       - name: Check out Git repository
         uses: actions/checkout@v3
 
@@ -87,4 +85,3 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.generate-tag.outputs.TAG }}
-
