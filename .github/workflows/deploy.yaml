@@ -32,7 +32,7 @@ jobs:
       - name: Install Space CLI
         run: |
           curl -fsSL https://deta.space/assets/space-cli.sh | sh
-          ~/.detaspace/bin/space login --with-token ${{ secrets.SPACE_TOKEN }}
+          echo ${{ secrets.SPACE_TOKEN }} | ~/.detaspace/bin/space login --with-token
 
       # - name: Clone Deta Metadata
       #   env:
