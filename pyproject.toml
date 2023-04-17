@@ -10,11 +10,11 @@ license="MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-fastapi = "0.88.0"
-uvicorn = "0.20.0"
-deta = "1.1.0"
-aiodeta = "0.1.2"
-python-dotenv = "0.21.0"
+fastapi = "^0.88.0"
+uvicorn = "^0.20.0"
+deta = "^1.1.0"
+aiodeta = "^0.1.2"
+python-dotenv = "^0.21.0"
 toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
