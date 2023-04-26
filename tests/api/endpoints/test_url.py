@@ -205,7 +205,7 @@ class TestUrl(IsolatedAsyncioTestCase):
             target_url=HttpUrl("https://google.com", scheme="https"),
             is_active=True,
             url=HttpUrl(
-                get_settings().base_url + "/api/url/key",
+                get_settings().deta_space_app_hostname + "/api/url/key",
                 scheme="https",
             ),
             clicks=0,
@@ -250,7 +250,7 @@ class TestUrl(IsolatedAsyncioTestCase):
             target_url=HttpUrl("https://google.com", scheme="https"),
             is_active=False,
             url=HttpUrl(
-                get_settings().base_url + "/api/url/key",
+                get_settings().deta_space_app_hostname + "/api/url/key",
                 scheme="https",
             ),
             clicks=0,
@@ -314,7 +314,7 @@ class TestUrl(IsolatedAsyncioTestCase):
             target_url=HttpUrl("https://google.com", scheme="https"),
             is_active=True,
             url=HttpUrl(
-                get_settings().base_url + "/api/url/key",
+                get_settings().deta_space_app_hostname + "/api/url/key",
                 scheme="https",
             ),
             clicks=0,

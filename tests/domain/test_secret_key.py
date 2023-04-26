@@ -14,11 +14,9 @@ class TestSecretKey(IsolatedAsyncioTestCase):
     async def asyncSetUp(self) -> None:
         deta_config = get_deta_base_config()
         self.deta_project_key = deta_config.deta_project_key
-        self.deta_project_id = deta_config.deta_project_id
 
         deta = Deta(
             project_key=self.deta_project_key,
-            project_id=self.deta_project_id,
         )
 
         self.base = deta.Base("url")
