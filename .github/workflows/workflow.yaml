@@ -24,7 +24,7 @@ jobs:
 
   deploy-dev:
     name: Deploy Development
-    if: success() && github.event_name == 'pull_request'
+    if: success()
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: development
@@ -37,5 +37,5 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: production
-    needs: test
+    needs: deploy-dev
     secrets: inherit
