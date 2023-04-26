@@ -82,3 +82,25 @@ jobs:
 
       - name: Check Code Style
         run: poetry run flake8 . -v
+
+  app-version-check:
+    name: Check if Version was upgraded
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Checkout main
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: tmp
+
+      - name: Setup Python
+        uses: ./.github/actions/python-setup
+        with:
+          PYTHON_VERSION: ${{ inputs.PYTHON_VERSION }}
+
+      - name: Check Version
+        run: |
+          poetry run python .github/utils/version_check.py
