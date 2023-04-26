@@ -37,12 +37,6 @@ jobs:
           files: coverage.xml
 
       - name: Upload coverage to CodeClimate
-        uses: brokeyourbike/codeclimate-action@v0.1
-        with:
-          token: ${{ secrets.CODECLIMATE_TOKEN }}
-          files: coverage.xml
-
-      - name: Upload coverage to CodeClimate
         uses: paambaati/codeclimate-action@v4.0.0
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TOKEN }}
