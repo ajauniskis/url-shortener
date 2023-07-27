@@ -4,7 +4,7 @@ from app.api.schemas.url import URLBase
 
 class CreateUrlRequest(URLBase):
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {"target_url": "https://google.com"},
         }
 

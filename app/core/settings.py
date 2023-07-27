@@ -1,7 +1,7 @@
 import os
 from functools import lru_cache
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 from app.core import logger
 
@@ -13,11 +13,12 @@ class Settings(BaseSettings):
     deta_space_app_hostname: str
     secret_key_length: int = 8
 
-    app_name = "URL shortener"
+    app_name: str = "URL shortener"
 
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "allow"
 
 
 @lru_cache

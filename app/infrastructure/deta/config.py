@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class DetaBaseConfig(BaseSettings):
@@ -9,6 +9,7 @@ class DetaBaseConfig(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "allow"
 
 
 @lru_cache
