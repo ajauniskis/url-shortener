@@ -23,7 +23,6 @@ class TestSettings(TestCase):
 
     @patch("app.core.settings.USE_CACHED_SETTINGS", True)
     def test_get_cached_settings__logs_and_returns(self):
-
         with self.assertLogs() as logger_context:
             actual = _get_cached_settings()
 

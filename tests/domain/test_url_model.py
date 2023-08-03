@@ -16,10 +16,7 @@ class TestUrl(IsolatedAsyncioTestCase):
         self.test_model = Url(
             key="test-key",
             secret_key="test-secret-key",
-            target_url=HttpUrl(
-                "https://test-url.com",
-                scheme="https",
-            ),
+            target_url=HttpUrl("https://test-url.com"),
             is_active=True,
             clicks=0,
         )
@@ -27,8 +24,7 @@ class TestUrl(IsolatedAsyncioTestCase):
     async def test_short_url__returns_short_url(self):
         actual = self.test_model.short_url
         expected = HttpUrl(
-            get_settings().deta_space_app_hostname + f"/api/url/{self.test_model.key}",
-            scheme="https",
+            get_settings().deta_space_app_hostname + f"/api/url/{self.test_model.key}"
         )
 
         self.assertEqual(

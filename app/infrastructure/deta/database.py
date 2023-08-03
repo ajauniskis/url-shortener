@@ -1,8 +1,9 @@
 from typing import Any, Dict, List, Union
 
+from aiohttp.client import ClientResponseError
 from pydantic import BaseModel
 
-from app.domain import RecordDoesNotExistExeption
+from app.domain import DetaBaseException
 from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 from app.infrastructure.deta.base import get_base
 
@@ -13,27 +14,34 @@ class DetaBaseClient(AbstractDatabaseClient):
         self.base = get_base(self.table_name)
 
     async def create(self, model) -> BaseModel:
-        response = await self.base.put([model.dict()])
-        return model.parse_obj(response["processed"]["items"][0])
+        record = model.model_dump()
+        del record["key"]
+        response = await self.base.put(model.model_dump())
+        if not response:
+            raise DetaBaseException
+        model.key = response["key"]
+        return model
 
-    async def get(self, key: str) -> Dict[str, Any]:
+    async def get(self, key: str) -> Union[Dict[str, Any], None]:
         response = await self.base.get(key)
         return response
 
-    async def query(self, query: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        response = await self.base.query(query)
-        items = response.get("items")
-        return items
+    async def query(
+        self, query: Union[Dict[str, Any], List[Dict[str, Any]]]
+    ) -> List[Dict[str, Any]]:
+        response = await self.base.fetch(query)
+        return response.items
 
     async def update(
         self,
         key: str,
         record: Dict[str, Union[str, Dict, float, int, bool]],
-    ) -> Dict[str, Union[str, Dict, float, int, bool]]:
-        response = await self.base.update(key=key, set=record)
-        if "Key not found" in response.get("errors", []):
-            raise RecordDoesNotExistExeption
-        return {"key": response.get("key"), **response.get("set")}
+    ) -> bool:
+        try:
+            await self.base.update(updates=record, key=key)
+            return True
+        except ClientResponseError:
+            return False
 
     async def delete(self, key: str) -> None:
         await self.base.delete(key)

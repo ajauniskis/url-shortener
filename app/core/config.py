@@ -35,7 +35,6 @@ class ProjectConfigParser:
         return {
             "url": HttpUrl(
                 self.project_config["tool"]["poetry"]["repository"],
-                scheme="https",
             ),
         }
 

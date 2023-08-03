@@ -24,13 +24,13 @@ class UrlRepositoryOverride(UrlRepository):
             return Url(
                 key=key,
                 secret_key="secret_key",
-                target_url=HttpUrl("https://google.com", scheme="https"),
+                target_url=HttpUrl("https://google.com"),
             )
         elif key == "disabled_redirect_url":
             return Url(
                 key=key,
                 secret_key="secret_key",
-                target_url=HttpUrl("https://google.com", scheme="https"),
+                target_url=HttpUrl("https://google.com"),
                 is_active=False,
             )
         else:
@@ -41,7 +41,7 @@ class UrlRepositoryOverride(UrlRepository):
             return Url(
                 key="key",
                 secret_key=secret_key,
-                target_url=HttpUrl("https://google.com", scheme="https"),
+                target_url=HttpUrl("https://google.com"),
                 is_active=True,
             )
 
@@ -49,7 +49,7 @@ class UrlRepositoryOverride(UrlRepository):
             return Url(
                 key="key",
                 secret_key=secret_key,
-                target_url=HttpUrl("https://google.com", scheme="https"),
+                target_url=HttpUrl("https://google.com"),
                 is_active=False,
             )
 
@@ -69,7 +69,7 @@ class UrlRepositoryOverride(UrlRepository):
 class DatabaseClientOverride(AbstractDatabaseClient):
     async def create(self, model):
         model.key = "key"
-        return model.parse_obj(model.dict())
+        return model.parse_obj(model.model_dump())
 
     async def get(self, key):
         if key == "valid_url":
@@ -84,39 +84,27 @@ class DatabaseClientOverride(AbstractDatabaseClient):
             return {}
 
     async def query(self, query):
-        if query == [
-            {
-                "secret_key": "invalid_key",
-            }
-        ]:
+        if query == {"secret_key": "invalid_key"}:
             return []
-        if query == [
-            {
-                "secret_key": "single_record",
-            }
-        ]:
+        if query == {"secret_key": "single_record"}:
             return [
                 {
                     "key": "some_key",
                     "secret_key": "single_record",
-                    "target_url": HttpUrl("https://google.com", scheme="https"),
+                    "target_url": HttpUrl("https://google.com"),
                 }
             ]
-        if query == [
-            {
-                "secret_key": "multiple_records",
-            }
-        ]:
+        if query == {"secret_key": "multiple_records"}:
             return [
                 {
                     "key": "some_key1",
                     "secret_key": "multiple_records",
-                    "target_url": HttpUrl("https://google.com", scheme="https"),
+                    "target_url": HttpUrl("https://google.com"),
                 },
                 {
                     "key": "some_key2",
                     "secret_key": "multiple_records",
-                    "target_url": HttpUrl("https://google.com", scheme="https"),
+                    "target_url": HttpUrl("https://google.com"),
                 },
             ]
         else:
