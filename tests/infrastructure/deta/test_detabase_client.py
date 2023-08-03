@@ -17,7 +17,6 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
 
         deta = Deta(
             project_key=deta_config.deta_project_key,
-            project_id=deta_config.deta_project_id,
         )
 
         self.base = deta.AsyncBase(TEST_BASE)
