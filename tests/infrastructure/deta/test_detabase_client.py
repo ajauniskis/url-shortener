@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from deta import Deta
 
+from app.domain import DetaBaseException
 from app.infrastructure.deta import DetaBaseClient, get_deta_base_config
 from tests.conftest import TEST_BASE, TestDomainModel
 
@@ -30,6 +31,9 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
             actual.key  # pyright:  ignore [reportGeneralTypeIssues]
         )
 
+        if not expected:
+            raise DetaBaseException
+
         self.assertEqual(
             actual.model_dump(),
             expected,
@@ -42,6 +46,9 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
         expected = await self.base.put(
             self.test_model.model_dump(),
         )
+
+        if not expected:
+            raise DetaBaseException
 
         actual = await self.database.get(
             expected["key"],
@@ -59,6 +66,9 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
         expected = await self.base.put(
             self.test_model.model_dump(),
         )
+
+        if not expected:
+            raise DetaBaseException
 
         actual = await self.database.query(
             {"value": self.test_model.value},
@@ -83,6 +93,9 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
                 value="test_query__returns_multiple_records2",
             ).model_dump(),
         )
+
+        if not created_record_1 or not created_record_2:
+            raise DetaBaseException
 
         expected = [
             created_record_1,
@@ -122,6 +135,9 @@ class TestDetabaseClient(IsolatedAsyncioTestCase):
                 value="test_update__returns_updated_record",
             ).model_dump(),
         )
+
+        if not expected:
+            raise DetaBaseException
 
         actual = await self.database.update(
             key=expected["key"],

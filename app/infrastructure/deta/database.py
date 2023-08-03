@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Union
 from aiohttp.client import ClientResponseError
 from pydantic import BaseModel
 
+from app.domain import DetaBaseException
 from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 from app.infrastructure.deta.base import get_base
 
@@ -16,14 +17,18 @@ class DetaBaseClient(AbstractDatabaseClient):
         record = model.model_dump()
         del record["key"]
         response = await self.base.put(model.model_dump())
+        if not response:
+            raise DetaBaseException
         model.key = response["key"]
         return model
 
-    async def get(self, key: str) -> Dict[str, Any]:
+    async def get(self, key: str) -> Union[Dict[str, Any], None]:
         response = await self.base.get(key)
         return response
 
-    async def query(self, query: Dict[str, Any]) -> List[Dict[str, Any]]:
+    async def query(
+        self, query: Union[Dict[str, Any], List[Dict[str, Any]]]
+    ) -> List[Dict[str, Any]]:
         response = await self.base.fetch(query)
         return response.items
 

@@ -1,6 +1,7 @@
 import os
 from random import randrange
 from string import ascii_letters, digits
+from typing import List
 from unittest import IsolatedAsyncioTestCase
 
 from deta import Deta
@@ -42,7 +43,7 @@ class TestSecretKey(IsolatedAsyncioTestCase):
         test_character = characters.pop(randrange(len(characters)))
 
         repository = UrlRepository()
-        payloads = [
+        payloads: List = [
             {"secret_key": char, "target_url": "https://google.com"}
             for char in characters
         ]

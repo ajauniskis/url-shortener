@@ -8,3 +8,7 @@ class UrlIsNotActiveException(BaseException):
 
 class UrlIsActiveException(BaseException):
     pass
+
+
+class DetaBaseException(BaseException):
+    pass
