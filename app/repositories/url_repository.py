@@ -23,21 +23,19 @@ class UrlRepository(AbstractRepository):
 
     async def get_by_secret_key(self, secret_key: str) -> Union[Url, None]:
         response = await self.database.query(
-            [
-                {"secret_key": secret_key},
-            ]
+            {"secret_key": secret_key},
         )
 
         if not len(response):
             return None
 
-        return Url(**response[0])  # pyright:  ignore [reportGeneralTypeIssues]
+        return Url(**response[0])
 
-    async def update(self, model: Url) -> Url:
+    async def update(self, model: Url) -> bool:
         if not model.key:
             raise RecordDoesNotExistExeption
 
-        response = await self.database.update(
+        if not await self.database.update(
             key=model.key,
             record={
                 "secret_key": model.secret_key,
@@ -45,9 +43,9 @@ class UrlRepository(AbstractRepository):
                 "is_active": model.is_active,
                 "clicks": model.clicks,
             },
-        )
-
-        return Url.construct(**response)
+        ):
+            return False
+        return True
 
     async def delete(self, model: Url) -> None:
         if not model.key:

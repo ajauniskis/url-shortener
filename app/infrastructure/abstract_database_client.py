@@ -15,7 +15,7 @@ class AbstractDatabaseClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def query(self, query: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    async def query(self, query: Dict[str, Any]) -> List[Dict[str, Any]]:
         raise NotImplementedError
 
     @abstractmethod

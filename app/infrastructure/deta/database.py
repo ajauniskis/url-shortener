@@ -13,27 +13,27 @@ class DetaBaseClient(AbstractDatabaseClient):
         self.base = get_base(self.table_name)
 
     async def create(self, model) -> BaseModel:
-        response = await self.base.put([model.dict()])
-        return model.parse_obj(response["processed"]["items"][0])
+        record = model.model_dump()
+        del record["key"]
+        response = await self.base.put(model.model_dump())
+        model.key = response["key"]
+        return model
 
     async def get(self, key: str) -> Dict[str, Any]:
         response = await self.base.get(key)
         return response
 
-    async def query(self, query: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        response = await self.base.query(query)
-        items = response.get("items")
-        return items
+    async def query(self, query: Dict[str, Any]) -> List[Dict[str, Any]]:
+        response = await self.base.fetch(query)
+        return response.items
 
     async def update(
         self,
         key: str,
         record: Dict[str, Union[str, Dict, float, int, bool]],
-    ) -> Dict[str, Union[str, Dict, float, int, bool]]:
-        response = await self.base.update(key=key, set=record)
-        if "Key not found" in response.get("errors", []):
-            raise RecordDoesNotExistExeption
-        return {"key": response.get("key"), **response.get("set")}
+    ) -> bool:
+        await self.base.update(updates=record, key=key)
+        return True
 
     async def delete(self, key: str) -> None:
         await self.base.delete(key)

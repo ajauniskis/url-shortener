@@ -55,8 +55,9 @@ async def create_url(
     )
 
     create_response = await url_repository.create(model=url_domain)
-    admin_response = await get_admin_info(create_response.secret_key, url_repository)
-    return CreateUrlResponse(**admin_response.dict())
+    return CreateUrlResponse(
+        **create_response.model_dump(), url=create_response.short_url
+    )
 
 
 @router.get(
@@ -93,7 +94,7 @@ async def get_admin_info(
 ) -> AdminUrlResponse:
     url = await _get_by_secret_key(url_repository, secret_key)
     response = AdminUrlResponse(
-        **url.dict(),
+        **url.model_dump(),
         url=url.short_url,
     )
     return response
@@ -114,7 +115,7 @@ async def activate_url(
         await url_repository.update(url)
 
         response = AdminUrlResponse(
-            **url.dict(),
+            **url.model_dump(),
             url=url.short_url,
         )
         return response
@@ -140,7 +141,7 @@ async def deactivate_url(
         await url_repository.update(url)
 
         response = AdminUrlResponse(
-            **url.dict(),
+            **url.model_dump(),
             url=url.short_url,
         )
         return response

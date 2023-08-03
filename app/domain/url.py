@@ -22,10 +22,10 @@ class Url(BaseModel):
         return str(target_url)
 
     @property
-    def short_url(self) -> str:
+    def short_url(self) -> HttpUrl:
         if not self.key:
             raise RecordDoesNotExistExeption
-        return get_settings().deta_space_app_hostname + f"/api/url/{self.key}"
+        return HttpUrl(get_settings().deta_space_app_hostname + f"/api/url/{self.key}")
 
     async def click(self) -> None:
         self.clicks += 1
