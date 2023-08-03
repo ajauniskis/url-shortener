@@ -8,6 +8,8 @@ from pydantic import BaseModel
 os.environ["USE_CACHED_SETTINGS"] = "FALSE"
 os.environ["ENV"] = "test"
 
+TEST_BASE = "test"
+
 
 class TestDomainModel(BaseModel):
     key: Optional[str] = None

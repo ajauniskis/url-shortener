@@ -43,7 +43,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
         repo = UrlRepository()
         model = Url(
             secret_key="secret_key",
-            target_url=HttpUrl("https://example.com", scheme="https"),
+            target_url=HttpUrl("https://example.com"),
             is_active=True,
             clicks=0,
         )
@@ -51,7 +51,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
         expected = Url(
             key="key",
             secret_key="secret_key",
-            target_url=HttpUrl("https://example.com", scheme="https"),
+            target_url=HttpUrl("https://example.com"),
             is_active=True,
             clicks=0,
         )
@@ -73,7 +73,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
         expected = Url(
             key="some_key",
             secret_key="secret_key",
-            target_url=HttpUrl("https://test.com", scheme="https"),
+            target_url=HttpUrl("https://test.com"),
             is_active=True,
             clicks=0,
         )
@@ -158,7 +158,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
 
         model = Url(
             secret_key="secret_key",
-            target_url=HttpUrl("https://example.com", scheme="https"),
+            target_url=HttpUrl("https://example.com"),
             is_active=True,
             clicks=0,
         )
@@ -168,9 +168,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
 
     @patch("app.infrastructure.config.DatabaseConfig")
     @patch("app.repositories.url_repository.get_database")
-    async def test_update_returns_url_model(
-        self, patch_get_database, patch_database_config
-    ):
+    async def test_update_returns_true(self, patch_get_database, patch_database_config):
         patch_database_config.return_value.database_type = "deta-base"
         patch_get_database.return_value = DatabaseClientOverride("url")
         repo = UrlRepository()
@@ -178,20 +176,14 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
         model = Url(
             key="test_update_returns_url_model",
             secret_key="secret_key",
-            target_url=HttpUrl("https://example.com", scheme="https"),
+            target_url=HttpUrl("https://example.com"),
             is_active=True,
             clicks=0,
         )
 
-        expected = model
-        expected.clicks = 1
-
         actual = await repo.update(model=model)
 
-        self.assertEqual(
-            actual,
-            expected,
-        )
+        self.assertTrue(actual)
 
     @patch("app.infrastructure.config.DatabaseConfig")
     @patch("app.repositories.url_repository.get_database")
@@ -205,7 +197,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
         model = Url(
             key="test_delete__returns_none",
             secret_key="secret_key",
-            target_url=HttpUrl("https://example.com", scheme="https"),
+            target_url=HttpUrl("https://example.com"),
             is_active=True,
             clicks=0,
         )
@@ -227,7 +219,7 @@ class TestUrlRepository(IsolatedAsyncioTestCase):
 
         model = Url(
             secret_key="secret_key",
-            target_url=HttpUrl("https://example.com", scheme="https"),
+            target_url=HttpUrl("https://example.com"),
             is_active=True,
             clicks=0,
         )

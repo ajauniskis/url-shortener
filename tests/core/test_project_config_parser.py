@@ -1,6 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
+from pydantic import HttpUrl
 from toml.decoder import TomlDecodeError
 
 from app.core import ProjectConfigParser
@@ -28,7 +29,6 @@ class TestProjectConfigParser(TestCase):
 
     @patch("toml.load")
     def test_read_project_config__returns_config(self, mock_toml):
-
         mock_toml.return_value = SAMPLE_CONFIG
 
         actual = ProjectConfigParser()
@@ -100,7 +100,7 @@ class TestProjectConfigParser(TestCase):
 
         self.assertEqual(
             actual,
-            {"url": SAMPLE_CONFIG["tool"]["poetry"]["repository"]},
+            {"url": HttpUrl(SAMPLE_CONFIG["tool"]["poetry"]["repository"])},
         )
 
     def test_get_project_contacts_key_not_found__returns_empty(self):

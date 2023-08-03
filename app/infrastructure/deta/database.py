@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Union
 
+from aiohttp.client import ClientResponseError
 from pydantic import BaseModel
 
-from app.domain import RecordDoesNotExistExeption
 from app.infrastructure.abstract_database_client import AbstractDatabaseClient
 from app.infrastructure.deta.base import get_base
 
@@ -32,8 +32,11 @@ class DetaBaseClient(AbstractDatabaseClient):
         key: str,
         record: Dict[str, Union[str, Dict, float, int, bool]],
     ) -> bool:
-        await self.base.update(updates=record, key=key)
-        return True
+        try:
+            await self.base.update(updates=record, key=key)
+            return True
+        except ClientResponseError:
+            return False
 
     async def delete(self, key: str) -> None:
         await self.base.delete(key)

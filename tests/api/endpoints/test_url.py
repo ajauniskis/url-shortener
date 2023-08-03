@@ -39,9 +39,13 @@ class TestUrl(IsolatedAsyncioTestCase):
             {
                 "detail": [
                     {
+                        "type": "url_parsing",
                         "loc": ["body", "target_url"],
-                        "msg": "invalid or missing URL scheme",
-                        "type": "value_error.url.scheme",
+                        "msg": "Input should be a valid URL,"
+                        + " relative URL without a base",
+                        "input": "invalid_url",
+                        "ctx": {"error": "relative URL without a base"},
+                        "url": "https://errors.pydantic.dev/2.1/v/url_parsing",
                     }
                 ]
             },
@@ -63,9 +67,11 @@ class TestUrl(IsolatedAsyncioTestCase):
             {
                 "detail": [
                     {
+                        "type": "missing",
                         "loc": ["body", "target_url"],
-                        "msg": "field required",
-                        "type": "value_error.missing",
+                        "msg": "Field required",
+                        "input": {},
+                        "url": "https://errors.pydantic.dev/2.1/v/missing",
                     }
                 ]
             },
@@ -82,9 +88,9 @@ class TestUrl(IsolatedAsyncioTestCase):
         )
 
         expected = CreateUrlResponse(
-            url=HttpUrl("http://127.0.0.1:8000/api/url/key", scheme="https"),
+            url=HttpUrl("http://127.0.0.1:8000/api/url/key"),
             secret_key="valid_secret_key",
-            target_url=HttpUrl("https://google.com", scheme="https"),
+            target_url=HttpUrl("https://google.com"),
             is_active=True,
             clicks=0,
         )
@@ -95,8 +101,8 @@ class TestUrl(IsolatedAsyncioTestCase):
         )
 
         self.assertEqual(
-            actual.json(),
-            expected.dict(),
+            CreateUrlResponse(**actual.json()),
+            expected,
         )
 
     async def test_forward_to_url__redirects_to_url(self):
@@ -107,7 +113,7 @@ class TestUrl(IsolatedAsyncioTestCase):
 
         self.assertEqual(
             actual.headers["location"],
-            "https://google.com",
+            "https://google.com/",
         )
 
         self.assertEqual(
@@ -126,7 +132,7 @@ class TestUrl(IsolatedAsyncioTestCase):
             Url(
                 key="redirect_url",
                 secret_key="secret_key",
-                target_url=HttpUrl("https://google.com", scheme="https"),
+                target_url=HttpUrl("https://google.com"),
                 clicks=1,
             )
         )
@@ -202,18 +208,15 @@ class TestUrl(IsolatedAsyncioTestCase):
 
         expected = AdminUrlResponse(
             secret_key="valid_secret_key",
-            target_url=HttpUrl("https://google.com", scheme="https"),
+            target_url=HttpUrl("https://google.com"),
             is_active=True,
-            url=HttpUrl(
-                get_settings().deta_space_app_hostname + "/api/url/key",
-                scheme="https",
-            ),
+            url=HttpUrl(get_settings().deta_space_app_hostname + "/api/url/key"),
             clicks=0,
         )
 
         self.assertEqual(
-            actual.json(),
-            expected.dict(),
+            AdminUrlResponse(**actual.json()),
+            expected,
         )
 
         self.assertEqual(
@@ -247,18 +250,15 @@ class TestUrl(IsolatedAsyncioTestCase):
 
         expected = AdminUrlResponse(
             secret_key="valid_secret_key",
-            target_url=HttpUrl("https://google.com", scheme="https"),
+            target_url=HttpUrl("https://google.com"),
             is_active=False,
-            url=HttpUrl(
-                get_settings().deta_space_app_hostname + "/api/url/key",
-                scheme="https",
-            ),
+            url=HttpUrl(get_settings().deta_space_app_hostname + "/api/url/key"),
             clicks=0,
         )
 
         self.assertEqual(
-            actual.json(),
-            expected.dict(),
+            AdminUrlResponse(**actual.json()),
+            expected,
         )
 
         self.assertEqual(
@@ -311,18 +311,15 @@ class TestUrl(IsolatedAsyncioTestCase):
 
         expected = AdminUrlResponse(
             secret_key="inactive_secret_key",
-            target_url=HttpUrl("https://google.com", scheme="https"),
+            target_url=HttpUrl("https://google.com"),
             is_active=True,
-            url=HttpUrl(
-                get_settings().deta_space_app_hostname + "/api/url/key",
-                scheme="https",
-            ),
+            url=HttpUrl(get_settings().deta_space_app_hostname + "/api/url/key"),
             clicks=0,
         )
 
         self.assertEqual(
-            actual.json(),
-            expected.dict(),
+            AdminUrlResponse(**actual.json()),
+            expected,
         )
 
         self.assertEqual(
@@ -400,13 +397,11 @@ class TestUrl(IsolatedAsyncioTestCase):
     async def test_peek_url__returns_target_url(self):
         actual = self.client.get("/api/url/peek/redirect_url")
 
-        expected = PeekUrlResponse(
-            target_url=HttpUrl("https://google.com", scheme="https")
-        )
+        expected = PeekUrlResponse(target_url=HttpUrl("https://google.com"))
 
         self.assertEqual(
             actual.json(),
-            expected.dict(),
+            expected.model_dump(),
         )
 
         self.assertEqual(

@@ -23,7 +23,6 @@ class TestGetDatabaseConfig(IsolatedAsyncioTestCase):
 
     @patch("app.infrastructure.config.USE_CACHED_SETTINGS", True)
     def test_get_cached_database_config__logs_and_returns(self):
-
         with self.assertLogs() as logger_context:
             actual = _get_cached_database_config()
 
